@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Usuario</title>
+    <link rel="stylesheet" href="{% static 'app/style-control-editar.css' %}">
+</head>
+<body>
+    <header class="header">
+    </header>
+    <main class="main-container">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}  <!-- This will render the form fields with labels and inputs -->
+
+            <button type="submit">Guardar Cambios</button>
+        </form>
+    </main>
+</body>
+</html>

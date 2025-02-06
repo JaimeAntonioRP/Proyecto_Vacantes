@@ -1,0 +1,169 @@
+/* Reseteo general y tipografía */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body, html {
+    height: 100%;
+    background-color: #e5f2fb;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Estructura general */
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Asegura que el footer esté abajo */
+}
+
+/* Contenedor principal */
+.container {
+    display: flex;
+    flex-direction: row;
+    max-width: 1100px;
+    width: 90%;
+    background: url("{% static 'app/cusco.jpg' %}") center/cover no-repeat; /* Imagen de fondo */
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-blend-mode: overlay;
+    margin: auto; /* Centra el contenedor */
+}
+
+/* Panel izquierdo */
+.left-panel {
+    background-color: rgba(242, 107, 97, 0.9); /* Color con transparencia */
+    color: white;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: left;
+    flex: 1;
+}
+
+.left-panel h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    font-weight: lighter;
+}
+
+.left-panel h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.left-panel p {
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+/* Panel derecho */
+.login-panel {
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.9); /* Fondo semitransparente */
+    position: relative;
+}
+
+.login-panel img {
+    width: 120px;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.login-panel form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-panel input {
+    padding: 12px;
+    margin: 10px 0;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.login-panel button {
+    padding: 12px;
+    font-size: 16px;
+    background-color: #4285f4;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.login-panel button:hover {
+    background-color: #357ae8;
+}
+
+/* Footer */
+footer {
+    color: #666;
+    font-size: 14px;
+    text-align: center;
+    padding: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    width: 100%;
+}
+
+/* Media queries para pantallas más pequeñas */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        max-width: 90%;
+        box-shadow: none;
+    }
+
+    .left-panel {
+        padding: 20px;
+        text-align: center;
+    }
+
+    .left-panel h1 {
+        font-size: 24px;
+    }
+
+    .left-panel h2 {
+        font-size: 16px;
+    }
+
+    .login-panel {
+        padding: 20px;
+    }
+
+    .login-panel img {
+        width: 100px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        max-width: 100%;
+    }
+
+    .left-panel h1 {
+        font-size: 20px;
+    }
+
+    .login-panel button {
+        font-size: 14px;
+        padding: 10px;
+    }
+}

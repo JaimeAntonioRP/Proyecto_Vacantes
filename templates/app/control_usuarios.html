@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Usuarios</title>
+    <link rel="stylesheet" href="{% static 'app/style-control.css' %}">
+    <style>
+        
+        /* Estilos para los botones */
+        .button {
+            padding: 10px 20px;
+            background-color: #28a745; /* Verde para el botón de buscar */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .button:hover {
+            background-color: #218838; /* Verde oscuro en hover */
+            transform: scale(1.05);
+        }
+
+        .button:active {
+            background-color: #1e7e34; /* Fondo aún más oscuro al hacer clic */
+        }
+
+        .form-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"], select {
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+            width: 250px;
+        }
+
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        form {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+
+        /* Asegúrate de que los botones en las celdas de la tabla también se vean bien */
+        button {
+            background-color: #007bff;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            text-align: center;
+            font-size: 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        button:active {
+            background-color: #004085;
+        }
+        /* Estilo del modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+        }
+
+        .modal button {
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .cancel-btn {
+            background-color: #f44336; /* Rojo */
+            color: white;
+        }
+
+        .confirm-btn {
+            background-color: #4CAF50; /* Verde */
+            color: white;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>Control de Usuarios</h1>
+    </header>
+    <main class="main-container">
+        <div class="user-profile">
+            <img src="{% static 'app/perfil.png' %}" alt="Foto del Usuario" class="user-photo">
+            <div class="user-info">
+                <p><strong>Nombre:</strong> {{ user.nombre }}</p>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Tipo Usuario:</strong> {{ user.tipo_usuario }}</p>
+            </div>
+        </div>
+
+        <h2>Gestión de Usuarios</h2>
+
+        <!-- Formulario de búsqueda y filtrado -->
+        <form method="get" class="search-filter-form">
+            <div class="form-container">
+                <label for="query">Buscar por Nombre o DNI:</label>
+                <input type="text" id="query" name="query" value="{{ request.GET.query }}">
+
+                <label for="tipo_usuario">Filtrar por Tipo de Usuario:</label>
+                <select name="tipo_usuario" id="tipo_usuario">
+                    <option value="">Seleccionar</option>
+                    <option value="REGIONAL" {% if request.GET.tipo_usuario == 'REGIONAL' %}selected{% endif %}>Regional</option>
+                    <option value="UGEL" {% if request.GET.tipo_usuario == 'UGEL' %}selected{% endif %}>UGEL</option>
+                    <option value="DIRECTOR" {% if request.GET.tipo_usuario == 'DIRECTOR' %}selected{% endif %}>Director</option>
+                </select>
+                <button type="submit" class="button">Buscar</button>
+            </div>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>DNI</th>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Tipo Usuario</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for usuario in usuarios %}
+                <tr>
+                    <td>{{ usuario.dni }}</td>
+                    <td>{{ usuario.nombre }}</td>
+                    <td>{{ usuario.email }}</td>
+                    <td>{{ usuario.tipo_usuario }}</td>
+                    <td>{{ usuario.estado }}</td>
+                    <td>
+                        <!-- Botón para abrir la página de edición -->
+                        <a href="{% url 'editar_usuario' usuario.id %}">
+                            <button>Editar</button>
+                        </a>
+                        <td>
+                            <!-- Botón para abrir la ventana emergente -->
+                            <button onclick="openDeleteModal('{{ usuario.id }}')">Eliminar</button>
+                        </td>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </main>
+    <!-- Modal de Confirmación de Eliminación -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <h3>¿Estás seguro de eliminar a este usuario?</h3>
+            <form id="deleteForm" method="post">
+                {% csrf_token %}
+                <button type="submit" class="confirm-btn">Sí, eliminar</button>
+                <button type="button" class="cancel-btn" onclick="closeDeleteModal()">Cancelar</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        // Función para abrir el modal de eliminación
+        function openDeleteModal(userId) {
+            document.getElementById('deleteForm').action = `/eliminar_usuario/${userId}/`;
+            document.getElementById('deleteModal').style.display = 'block';
+        }
+
+        // Función para cerrar el modal de eliminación
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

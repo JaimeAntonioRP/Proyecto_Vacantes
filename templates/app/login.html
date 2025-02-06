@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MI VACANTE CUSCO</title>
+    <link rel="stylesheet" href="{% static 'app/style-login.css' %}">
+</head>
+<body style="background: url('{% static "app/cusco.jpg" %}') center/cover no-repeat; background-size: cover;">
+
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <h2>PERFIL ADMINISTRADOR</h2>
+            <h1>MI VACANTE</h1>
+            <p>Sistema de Vacantes</p>
+        </div>
+        <div class="login-panel">
+            <img src="{% static 'app/logo.jpeg' %}" alt="Logo">
+            <form id="loginForm" method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                <input type="text" name="email" placeholder="Correo Electrónico" required>
+                <input type="password" name="password" placeholder="Contraseña" required>
+                <button type="submit">Entrar</button>
+            </form>
+
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <footer>
+        <p>Design by GEREDU CENTRO DE COMPUTO</p>
+    </footer>
+    <script src="{% static 'app/script.js' %}"></script>
+</body>
+</html>

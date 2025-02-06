@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boletas de Pago Web - Inicio</title>
+    <link rel="stylesheet" href="{% static 'app/style-home.css' %}">
+</head>
+<body>
+    <header class="header">
+        <h1>Boletas de Pago Web</h1>
+        <div class="user-info">
+            <span>{{ nombre_usuario }}</span>
+            <img src="{% static 'app/perfil.png' %}" alt="Foto del Usuario">
+            <a href="{% url 'logout' %}" class="logout-button">Cerrar sesión</a>
+        </div>
+    </header>
+    <main class="main-container">
+        {% if tipo_usuario == "REGIONAL" %}
+            <section class="panel">
+                <h3>Panel de Usuario Regional</h3>
+                <div class="button-group">
+                    <a href="{% url 'crear_usuario' %}" class="button">
+                        <img src="{% static 'app/crear_usuario.png' %}" alt="Crear Usuario">
+                        <span>Crear Usuario</span>
+                    </a>
+                    <a href="{% url 'reporte_vacantes' %}" class="button">
+                        <img src="{% static 'app/generar_reporte.png' %}" alt="Generar Reporte de Vacantes">
+                        <span>Generar Reporte de Vacantes</span>
+                    </a>
+                    <a href="{% url 'control_usuarios' %}" class="button">
+                        <img src="{% static 'app/control_usuarios.png' %}" alt="Control de Usuarios UGEL">
+                        <span>Control de Usuarios UGEL</span>
+                    </a>
+                    <a href="{% url 'registrar_colegios' %}" class="button">
+                        <img src="{% static 'app/registrar_colegios.png' %}" alt="Registrar Colegios">
+                        <span>Registrar colegios</span>
+                    </a>
+                    <a href="{% url 'generar_backup' %}" class="button">
+                        <img src="{% static 'app/generar_backup.png' %}" alt="Generar Backup">
+                        <span>Generar Backup</span>
+                    </a>
+                    
+                    
+                </div>
+            </section>
+        {% elif tipo_usuario == "UGEL" %}
+            <section class="panel">
+                <h3>Panel de Usuario UGEL</h3>
+                <div class="button-group">
+                    <a href="{% url 'registrar_instituciones' %}" class="button">
+                        <img src="{% static 'app/registrar_instituciones.png' %}" alt="Registrar Instituciones Educativas">
+                        <span>Registrar Instituciones Educativas</span>
+                    </a>
+                    <a href="{% url 'registrar_directores' %}" class="button">
+                        <img src="{% static 'app/registrar_directores.png' %}" alt="Registrar Directores">
+                        <span>Registrar Directores</span>
+                    </a>
+                </div>
+            </section>
+        {% elif tipo_usuario == "DIRECTOR" %}
+            <section class="panel">
+                <h3>Panel de Usuario Director</h3>
+                <div class="button-group">
+                    <a href="{% url 'registro_vacantes' %}" class="button">
+                        <img src="{% static 'app/registro_vacantes.png' %}" alt="Registrar Vacantes Disponibles">
+                        <span>Registrar Vacantes Disponibles</span>
+                    </a>
+                    <a href="{% url 'registro_vacantes_nee' %}" class="button">
+                        <img src="{% static 'app/registro_vacantes_nee.png' %}" alt="Registrar Vacantes NEE">
+                        <span>Registrar Vacantes NEE</span>
+                    </a>
+                </div>
+            </section>
+        {% else %}
+            <p class="error-message">No tienes un tipo de usuario definido.</p>
+        {% endif %}
+    </main>
+    <footer class="footer">
+        <p>Design by GEREDU CENTRO DE COMPUTO</p>
+    </footer>
+</body>
+</html>

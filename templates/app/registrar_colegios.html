@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>Panel de Usuario Regional</title>
+    <link rel="stylesheet" href="{% static 'app/style.css' %}">
+</head>
+<body>
+    <h1>Bienvenido, {{ request.user.nombre }}</h1>
+    <h3>Panel de Usuario Regional</h3>
+    <ul>
+        <!-- Agrega más opciones según sea necesario -->
+    </ul>
+</body>
+</html>

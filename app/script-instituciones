@@ -1,0 +1,45 @@
+# Variable para almacenar la última institución procesada
+institucion_actual = None
+
+# Iterar sobre las filas del archivo CSV
+for index, row in data.iterrows():
+    # Si 'cod_ied_N' es diferente de NaN, significa que estamos comenzando una nueva institución educativa
+    if pd.notna(row['cod_ied_N']):
+        try:
+            # Buscar o crear la UGEL asociada
+            ugel, created = Ugel.objects.get_or_create(nombre=row['d_dreugel'])
+
+            # Crear o obtener la Institución Educativa, con comprobación si la institución ya existe
+            institucion_actual, created = InstitucionEducativa.objects.get_or_create(
+                cod_ied_N=str(int(row['cod_ied_N'])),
+                nombre=row['nomb_ied'],
+                ugel=ugel,
+                defaults={'cod_mod': row['cod_mod']}
+            )
+            
+            if created:
+                print(f"Institución {institucion_actual.nombre} creada con éxito.")
+            else:
+                print(f"Institución {institucion_actual.nombre} ya existía.")
+
+        except Exception as e:
+            print(f"Error al procesar la institución {row['nomb_ied']} en la fila {index + 1}: {str(e)}")
+
+    # Filtrar solo las filas que contienen un código modular y un nivel
+    if pd.notna(row['cod_mod']) and pd.notna(row['nivel']):
+        try:
+            # Buscar o crear un nivel asociado a la institución educativa
+            nivel_obj, created = Nivel.objects.get_or_create(
+                cod_modular=row['cod_mod'],
+                nivel=row['nivel']
+            )
+
+            # Asociar el nivel a la institución educativa
+            institucion_actual.niveles.add(nivel_obj)
+            if created:
+                print(f"Nivel {nivel_obj.nivel} con código modular {nivel_obj.cod_modular} agregado.")
+            else:
+                print(f"Nivel {nivel_obj.nivel} ya existía para la institución {institucion_actual.nombre}.")
+                
+        except Exception as e:
+            print(f"Error al asociar el nivel {row['nivel']} a la institución {institucion_actual.nombre}: {str(e)}")

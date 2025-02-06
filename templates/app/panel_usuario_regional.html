@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Usuario Regional</title>
+    <link rel="stylesheet" href="{% static 'app/style.css' %}">
+</head>
+<body>
+    <h1>Bienvenido, {{ request.user.nombre }}</h1>
+    <h3>Panel de Usuario Regional</h3>
+    <ul>
+        <li><a href="{% url 'crear_usuario' %}">Crear Usuario</a></li>
+        <li><a href="{% url 'reporte_vacantes' %}">Generar Reporte de Vacantes</a></li>
+        <li><a href="{% url 'control_usuarios_ugel' %}">Control de Usuarios UGEL</a></li>
+        <li><a href="{% url 'generar_backup' %}">Generar Backup por Fecha</a></li>
+        <!-- Agrega más opciones según sea necesario -->
+    </ul>
+</body>
+</html>
