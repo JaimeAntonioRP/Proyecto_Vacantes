@@ -118,8 +118,9 @@ class Vacante(models.Model):
     codigo_modular = models.CharField(
         max_length=10,
         verbose_name="Código Modular",
-        help_text="Código modular de la institución educativa."
-    , default="Desconocido")
+        help_text="Código modular de la institución educativa.",
+        blank=True, 
+        default="")
 
     # Nivel de educación basado en NIVEL_MODALIDAD_CHOICES
     nivel = models.CharField(max_length=50)
