@@ -119,76 +119,157 @@
         button:hover {
             opacity: 0.8;
         }
+        .header-container {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        background-color: #f8f9fa; /* Fondo claro para el encabezado */
+        padding: 10px 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    }
+
+    /* Estilo del botón de regreso */
+    .back-button {
+        margin-right: 20px; /* Espaciado entre el icono y el título */
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+    }
+
+    /* Estilo del icono */
+    .back-icon {
+        width: 30px;
+        height: 30px;
+        transition: transform 0.3s ease;
+    }
+
+    .back-button:hover .back-icon {
+        transform: scale(1.1); /* Aumentar ligeramente el tamaño al pasar el ratón */
+    }
+
+    h1 {
+        font-size: 24px;
+        color: #333; /* Color del título */
+        margin: 0;
+    }
+
     </style>
 </head>
 <body>
     <header class="header">
+        <div class="header-container">
+        <!-- Botón para regresar a la página home -->
+        <a href="{% url 'home' %}" class="back-button">
+            <img src="{% static 'app/atras.png' %}" alt="Volver" class="back-icon">
+        </a>
         <h1>Control de Usuarios</h1>
+    </div>
     </header>
     <main class="main-container">
+        <!-- Información del usuario actual -->
         <div class="user-profile">
             <img src="{% static 'app/perfil.png' %}" alt="Foto del Usuario" class="user-photo">
             <div class="user-info">
                 <p><strong>Nombre:</strong> {{ user.nombre }}</p>
                 <p><strong>Email:</strong> {{ user.email }}</p>
                 <p><strong>Tipo Usuario:</strong> {{ user.tipo_usuario }}</p>
+                <p><strong>UGEL:</strong> {{ user.ugel }}</p>
             </div>
         </div>
 
         <h2>Gestión de Usuarios</h2>
 
-        <!-- Formulario de búsqueda y filtrado -->
+        <!-- Formulario de búsqueda y filtros -->
         <form method="get" class="search-filter-form">
             <div class="form-container">
-                <label for="query">Buscar por Nombre o DNI:</label>
-                <input type="text" id="query" name="query" value="{{ request.GET.query }}">
+                <label for="query">Buscar:</label>
+                <input type="text" id="query" name="query" value="{{ request.GET.query }}" placeholder="Nombre, Apellido o DNI">
 
-                <label for="tipo_usuario">Filtrar por Tipo de Usuario:</label>
+                <label for="tipo_usuario">Tipo de Usuario:</label>
                 <select name="tipo_usuario" id="tipo_usuario">
-                    <option value="">Seleccionar</option>
+                    <option value="">Todos</option>
                     <option value="REGIONAL" {% if request.GET.tipo_usuario == 'REGIONAL' %}selected{% endif %}>Regional</option>
                     <option value="UGEL" {% if request.GET.tipo_usuario == 'UGEL' %}selected{% endif %}>UGEL</option>
                     <option value="DIRECTOR" {% if request.GET.tipo_usuario == 'DIRECTOR' %}selected{% endif %}>Director</option>
                 </select>
+
+                <label for="ugel">UGEL:</label>
+                <select name="ugel" id="ugel">
+                    <option value="">Todas</option>
+                    {% for ugel in ugeles %}
+                    <option value="{{ ugel.id }}" {% if request.GET.ugel == ugel.id|stringformat:"s" %}selected{% endif %}>{{ ugel.nombre }}</option>
+                    {% endfor %}
+                </select>
+
                 <button type="submit" class="button">Buscar</button>
             </div>
         </form>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>DNI</th>
-                    <th>Nombre</th>
-                    <th>Email</th>
-                    <th>Tipo Usuario</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for usuario in usuarios %}
-                <tr>
-                    <td>{{ usuario.dni }}</td>
-                    <td>{{ usuario.nombre }}</td>
-                    <td>{{ usuario.email }}</td>
-                    <td>{{ usuario.tipo_usuario }}</td>
-                    <td>{{ usuario.estado }}</td>
-                    <td>
-                        <!-- Botón para abrir la página de edición -->
-                        <a href="{% url 'editar_usuario' usuario.id %}">
-                            <button>Editar</button>
-                        </a>
-                        <td>
-                            <!-- Botón para abrir la ventana emergente -->
-                            <button onclick="openDeleteModal('{{ usuario.id }}')">Eliminar</button>
-                        </td>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <!-- Tabla de usuarios -->
+<table>
+    <thead>
+        <tr>
+            <th>DNI</th>
+            <th>Nombre</th>
+            <th>Apellido Paterno</th>
+            <th>Apellido Materno</th>
+            <th>Email</th>
+            <th>Tipo Usuario</th>
+            <th>UGEL</th>
+            <th>Código Modular</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for usuario in page_obj %}
+        <tr>
+            <td>{{ usuario.dni }}</td>
+            <td>{{ usuario.nombre }}</td>
+            <td>{{ usuario.apellido_paterno }}</td>
+            <td>{{ usuario.apellido_materno }}</td>
+            <td>{{ usuario.email }}</td>
+            <td>{{ usuario.tipo_usuario }}</td>
+            <td>{{ usuario.ugel.nombre }}</td>
+            <td>{{ usuario.codigo_modular }}</td>
+            <td>
+                <a href="{% url 'editar_usuario' usuario.id %}"><button>Editar</button></a>
+                <button onclick="openDeleteModal('{{ usuario.id }}')">Eliminar</button>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="9">No se encontraron usuarios.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Controles de paginación -->
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.tipo_usuario %}&tipo_usuario={{ request.GET.tipo_usuario }}{% endif %}{% if request.GET.ugel %}&ugel={{ request.GET.ugel }}{% endif %}">Primera</a>
+            <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.tipo_usuario %}&tipo_usuario={{ request.GET.tipo_usuario }}{% endif %}{% if request.GET.ugel %}&ugel={{ request.GET.ugel }}{% endif %}">Anterior</a>
+        {% else %}
+            <a class="disabled">Primera</a>
+            <a class="disabled">Anterior</a>
+        {% endif %}
+
+        <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.tipo_usuario %}&tipo_usuario={{ request.GET.tipo_usuario }}{% endif %}{% if request.GET.ugel %}&ugel={{ request.GET.ugel }}{% endif %}">Siguiente</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.tipo_usuario %}&tipo_usuario={{ request.GET.tipo_usuario }}{% endif %}{% if request.GET.ugel %}&ugel={{ request.GET.ugel }}{% endif %}">Última</a>
+        {% else %}
+            <a class="disabled">Siguiente</a>
+            <a class="disabled">Última</a>
+        {% endif %}
+    </span>
+</div>
+
     </main>
-    <!-- Modal de Confirmación de Eliminación -->
+
+    <!-- Modal de confirmación de eliminación -->
     <div id="deleteModal" class="modal">
         <div class="modal-content">
             <h3>¿Estás seguro de eliminar a este usuario?</h3>
@@ -199,14 +280,15 @@
             </form>
         </div>
     </div>
+
     <script>
-        // Función para abrir el modal de eliminación
+        // Abrir el modal para confirmar la eliminación
         function openDeleteModal(userId) {
             document.getElementById('deleteForm').action = `/eliminar_usuario/${userId}/`;
             document.getElementById('deleteModal').style.display = 'block';
         }
 
-        // Función para cerrar el modal de eliminación
+        // Cerrar el modal
         function closeDeleteModal() {
             document.getElementById('deleteModal').style.display = 'none';
         }

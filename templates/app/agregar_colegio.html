@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Formulario Colegio{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'app/style-form-colegios.css' %}">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Agregar Colegio</h1>
+        <form method="post" class="mt-4">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form.cod_mod.label_tag }}
+                    {{ form.cod_mod }}
+                </div>
+                <div class="col-md-6">
+                    {{ form.cen_edu.label_tag }}
+                    {{ form.cen_edu }}
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    {{ form.niv_mod.label_tag }}
+                    {{ form.niv_mod }}
+                </div>
+                <div class="col-md-6">
+                    {{ form.d_niv_mod.label_tag }}
+                    {{ form.d_niv_mod }}
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    {{ form.d_forma.label_tag }}
+                    {{ form.d_forma }}
+                </div>
+                <div class="col-md-6">
+                    {{ form.d_cod_car.label_tag }}
+                    {{ form.d_cod_car }}
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    {{ form.d_tipss.label_tag }}
+                    {{ form.d_tipss }}
+                </div>
+                <div class="col-md-6">
+                    {{ form.d_gestion.label_tag }}
+                    {{ form.d_gestion }}
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-12">
+                    {{ form.d_ges_dep.label_tag }}
+                    {{ form.d_ges_dep }}
+                </div>
+            </div>
+            <div class="mt-4 text-center">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

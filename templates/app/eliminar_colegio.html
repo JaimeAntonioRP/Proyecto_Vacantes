@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmar Eliminación</title>
+    <link rel="stylesheet" href="{% static 'app/style-eliminar-c.css' %}">
+</head>
+<body>
+    <div class="confirmation-container">
+        <h1>¿Está seguro de que desea eliminar este colegio?</h1>
+        <p><strong>Código Modular:</strong> {{ colegio.cod_mod }}</p>
+        <p><strong>Centro Educativo:</strong> {{ colegio.cen_edu }}</p>
+
+        <form method="POST" action="">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Eliminar</button>
+            <a href="{% url 'registrar_colegios' %}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</body>
+</html>

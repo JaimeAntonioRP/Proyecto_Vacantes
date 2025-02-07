@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi VACANTE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{%static 'app/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{%static 'app/css/slick.css' %}" type="text/css" /> 
+    <link rel="stylesheet" href="{%static 'app/css/templatemo-style.css' %}">
+<!--
+    
+TemplateMo 560 Astro Motion
+
+https://templatemo.com/tm-560-astro-motion
+
+-->
+</head>
+<body>
+    <video autoplay muted loop id="bg-video">
+        <source src="{%static 'app/video/VID_FACHADA.mp4' %}" type="video/mp4">
+    </video>
+    <div class="page-container">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="cd-slider-nav">
+              <nav class="navbar navbar-expand-lg" id="tm-nav">
+                <a class="navbar-brand" href="#">MI VACANTE CUSCO</a>
+                  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-supported-content" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                  </button>
+                  <div class="collapse navbar-collapse" id="navbar-supported-content">
+                    <ul class="navbar-nav mb-2 mb-lg-0">
+                      <li class="nav-item selected">
+                        <a class="nav-link" aria-current="page" href="#0" data-no="1">Home</a>
+                        <div class="circle"></div>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="#0" data-no="2">UGELs</a>
+                        <div class="circle"></div>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="#0" data-no="3">Sobre Nosotros</a>
+                        <div class="circle"></div>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="#0" data-no="4">Contacto</a>
+                        <div class="circle"></div>
+                      </li>
+                    </ul>
+                  </div>
+              </nav>
+            </div>
+          </div>          
+        </div>        
+      </div>      
+      <div class="container-fluid tm-content-container">
+        <ul class="cd-hero-slider mb-0 py-5">
+          <li class="px-3" data-page-no="1">
+            <div class="page-width-1 page-left">
+              <div class="d-flex position-relative tm-border-top tm-border-bottom intro-container">
+                <div class="intro-left tm-bg-dark">
+                  <h2 class="mb-4">!Bienvenidos a Mi Vacante!</h2>
+                  <p class="mb-4">
+                    En Mi Vacante, nos comprometemos a facilitar el acceso a la información de cupos disponibles en las instituciones educativas de la región de Cusco. Nuestra plataforma está diseñada para brindar a padres de familia, docentes y comunidades escolares una herramienta confiable y sencilla para consultar la disponibilidad de vacantes en cada UGEL y colegio de la región.
+                    Aquí podrás explorar las UGELs, obtener detalles actualizados de los colegios y tomar decisiones informadas para garantizar una educación de calidad para tus hijos.
+                    ¡Empieza ahora y asegura el futuro educativo de los tuyos con Mi Vacante!. </p>
+                   </div>
+                <div class="intro-right">
+                  <img src="{%static 'app/img/home-img-1.jpg' %} " alt="Image" class="img-fluid intro-img-1">
+                  <img src="{%static 'app/img/home-img-2.jpg' %} " alt="Image" class="img-fluid intro-img-2">
+                </div>
+                <div class="circle intro-circle-1"></div>
+                <div class="circle intro-circle-2"></div>
+                <div class="circle intro-circle-3"></div>
+                <div class="circle intro-circle-4"></div>
+              </div>
+              <div class="text-center">
+                <a href="#0" data-page-no="2" class="btn btn-primary tm-intro-btn tm-page-link">
+                  Ver UGELs
+                </a>
+                <a href="{% url 'login' %}" class="btn btn-primary tm-intro-btn">
+                  Iniciar Sesión
+              </a>
+              </div>            
+            </div>            
+          </li>
+          <li data-page-no="2">
+            <!-- Image Carousel -->
+            <div class="mx-auto position-relative gallery-container">
+              <div class="circle intro-circle-1"></div>
+              <div class="circle intro-circle-2"></div>
+              <div class="mx-auto tm-border-top gallery-slider">
+                <figure class="effect-julia item">
+                    <img src="{%static 'app/img/ugel-cusco.jpg'%}" alt="Image">
+                    <figcaption>
+                        <div>
+                            <p>UGEL CUSCO</p>
+                        </div>
+                        <a href="#">View more</a>
+                    </figcaption>
+                </figure>
+                <figure class="effect-julia item">
+                    <img src="{%static 'app/img/ugel-anta.png'%}" alt="Image">
+                    <figcaption>
+                        <div>
+                            <p>UGEL ANTA</p>
+                        </div>
+                        <a href="#">View more</a>
+                    </figcaption>
+                </figure>
+                <figure class="effect-julia item">
+                    <img src="{%static 'app/img/ugel-acomayo.jpg'%}" alt="Image">
+                    <figcaption>
+                        <div>
+                            <p>UGEL ACOMAYO</p>
+                        </div>
+                        <a href="#">View more</a>
+                    </figcaption>
+                </figure>
+                <figure class="effect-julia item">
+                    <img src="{%static 'app/img/ugel-calca.jpg'%}" alt="Image">
+                    <figcaption>
+                        <div>
+                            <p>UGEL CALCA</p>
+                        </div>
+                        <a href="#">View more</a>
+                    </figcaption>
+                </figure>
+                <figure class="effect-julia item">
+                    <img src="{%static 'app/img/ugel-canas.jpg'%}" alt="Image">
+                    <figcaption>
+                        <div>
+                            <p>UGEL CANAS</p>
+                        </div>
+                        <a href="#">View more</a>
+                    </figcaption>
+                </figure>
+                <figure class="effect-julia item">
+                    <img src="{%static 'app/img/ugel-canchis.jpg'%}" alt="Image">
+                    <figcaption>
+                        <div>
+                            <p>UGEL CANCHIS</p>
+                        </div>
+                        <a href="#">View more</a>
+                    </figcaption>
+                </figure>
+                <figure class="effect-julia item">
+                    <img src="{%static 'app/img/ugel-chumbivilcas.png'%}" alt="Image">
+                    <figcaption>
+                        <div>
+                            <p>UGEL CHUMBIVILCAS</p>
+                        </div>
+                        <a href="#">View more</a>
+                    </figcaption>
+                </figure>
+                <figure class="effect-julia item">
+                    <img src="{%static 'app/img/ugel-espinar.png'%}" alt="Image">
+                    <figcaption>
+                        <div>
+                            <p>UGEL ESPINAR</p>
+                        </div>
+                        <a href="#">View more</a>
+                    </figcaption>
+                </figure>
+                <figure class="effect-julia item">
+                    <img src="{%static 'app/img/ugel-la-convecion.png'%}" alt="Image">
+                    <figcaption>
+                        <div>
+                            <p>UGEL LA CONVECION</p>
+                        </div>
+                        <a href="#">View more</a>
+                    </figcaption>
+                </figure>
+                <figure class="effect-julia item">
+                    <img src="{%static 'app/img/ugel-paruro.png'%}" alt="Image">
+                    <figcaption>
+                        <div>
+                            <p>UGEL PARURO</p>
+                        </div>
+                        <a href="#">View more</a>
+                    </figcaption>
+                </figure>
+                <figure class="effect-julia item">
+                  <img src="{%static 'app/img/ugel-paucartambo.jpg'%}" alt="Image">
+                  <figcaption>
+                      <div>
+                          <p>UGEL PAUCARTAMBO</p>
+                      </div>
+                      <a href="#">View more</a>
+                  </figcaption>
+              </figure>
+              <figure class="effect-julia item">
+                <img src="{%static 'app/img/ugel-quispicanchi.jpg'%}" alt="Image">
+                <figcaption>
+                    <div>
+                        <p>UGEL QUISPICANCHI</p>
+                    </div>
+                    <a href="#">View more</a>
+                </figcaption>
+            </figure>
+          </figure>
+          <figure class="effect-julia item">
+            <img src="{%static 'app/img/ugel-urubamba.jpg'%}" alt="Image">
+            <figcaption>
+                <div>
+                    <p>UGEL URUBAMBA</p>
+                </div>
+                <a href="#">View more</a>
+            </figcaption>
+        </figure>
+              </div>
+            </div>
+          </li>
+          <li data-page-no="3" class="px-3">
+            <div class="position-relative page-width-1 page-right tm-border-top tm-border-bottom">
+              <div class="circle intro-circle-1"></div>
+              <div class="circle intro-circle-2"></div>
+              <div class="circle intro-circle-3"></div>
+              <div class="circle intro-circle-4"></div>
+              <div class="tm-bg-dark content-pad">
+                <h2 class="mb-4">Sobre Nosostros</h2>
+                <p>
+                  GEREDU Cusco (Gerencia Regional de Educación de Cusco) es el organismo encargado de planificar, coordinar y supervisar las políticas educativas en la región. Nuestra misión es garantizar una educación inclusiva, equitativa y de calidad para todos los niños, niñas y jóvenes del Cusco, trabajando en conjunto con las Unidades de Gestión Educativa Local (UGELs) y las instituciones educativas de cada provincia.
+
+A través de nuestra plataforma "Mi Vacante", buscamos modernizar y facilitar el acceso a la información sobre vacantes escolares disponibles en toda la región. Este proyecto refleja nuestro compromiso con la transparencia y la eficiencia, permitiendo que padres y estudiantes tomen decisiones informadas y oportunas.
+
+En GEREDU, trabajamos día a día para promover una educación que fomente el desarrollo integral de nuestros estudiantes, reconociendo la diversidad cultural y geográfica de nuestra región. ¡Estamos comprometidos con construir un futuro mejor para el Cusco!
+                </p>
+              </div>              
+            </div>
+          </li>
+          <li data-page-no="4">
+            <div class="mx-auto page-width-2">
+              <div class="row">
+                <div class="col-md-6 me-0 ms-auto">
+                  <h2 class="mb-4">Contact Us</h2>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6 tm-contact-left">
+                  <form action="#" method="POST" class="contact-form">
+                    <div class="input-group tm-mb-30">
+                        <input name="name" type="text" class="form-control rounded-0 border-top-0 border-end-0 border-start-0" placeholder="Name">
+                    </div>
+                    <div class="input-group tm-mb-30">
+                        <input name="email" type="text" class="form-control rounded-0 border-top-0 border-end-0 border-start-0" placeholder="Email">
+                    </div>
+                    <div class="input-group tm-mb-30">
+                        <textarea rows="5" name="message" class="textarea form-control rounded-0 border-top-0 border-end-0 border-start-0" placeholder="Message"></textarea>
+                    </div>
+                    <div class="input-group justify-content-end">
+                        <input type="submit" class="btn btn-primary tm-btn-pad-2" value="Send">
+                    </div>
+                  </form>
+                </div>
+                <div class="col-md-6 tm-contact-right">                  
+                  <p class="mb-4">
+                    Integer erat turpis, vestibulum pellentesque aliquam
+                    ultricies, finibus nec dui. Donec bibendum enim mi,
+                    at tristique leo feugiat at.
+                  </p>
+                  <div>
+                    Email: <a href="mailto:info@company.com" class="tm-link-white">info@company.com</a>
+                  </div>
+                  <div class="tm-mb-45">
+                    Tel: <a href="tel:0100200340" class="tm-link-white">010-020-0340</a>
+                  </div>
+                  <!-- Map -->
+                  <div class="map-outer">
+                    <div class="gmap-canvas">
+                        <iframe width="100%" height="400" id="gmap-canvas"
+                            src="https://maps.google.com/maps?q=Av.+L%C3%BAcio+Costa,+Rio+de+Janeiro+-+RJ,+Brazil&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                            frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>
+                    </div>
+                </div>
+                </div>
+              </div>
+            </div>            
+          </li>
+        </ul>
+    </div>
+    <div class="container-fluid">
+      <footer class="row mx-auto tm-footer">
+        <div class="col-md-6 px-0">
+          Copyright GEREDU 2024. Todos los derechos reservados.
+        </div>
+        <div class="col-md-6 px-0 tm-footer-right">
+          Designed by <a rel="sponsored" href="https://templatemo.com" target="_blank" class="tm-link-white">Centro de Cómputo</a>
+        </div>
+      </footer>
+    </div>
+  </div>
+  <!-- Preloader, https://ihatetomatoes.net/create-custom-preloading-screen/ -->
+  <div id="loader-wrapper">            
+    <div id="loader"></div>
+    <div class="loader-section section-left"></div>
+    <div class="loader-section section-right"></div>
+  </div>  
+  <script src="{%static 'app/js/jquery-3.5.1.min.js'%}"></script>
+  <script src="{%static 'app/js/bootstrap.min.js'%}"></script>
+  <script src="{%static 'app/js/slick.js'%}"></script>
+  <script src="{%static 'app/js/templatemo-script.js'%}"></script>
+</body>
+</html> 

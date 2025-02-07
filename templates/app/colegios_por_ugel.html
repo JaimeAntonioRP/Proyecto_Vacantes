@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colegios de {{ ugel.nombre }}</title>
+    <link rel="stylesheet" href="{% static 'app/style-ugel.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Colegios de {{ ugel.nombre }}</h1>
+    </header>
+
+    <main>
+        <ul>
+            {% for colegio in colegios %}
+            <li>
+                <h2>{{ colegio.nombre }}</h2>
+                <p>Dirección: {{ colegio.direccion }}</p>
+                <p>Código Modular: {{ colegio.cod_modular }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+    </main>
+
+    <footer>
+        <a href="{% url 'index' %}">Volver al Inicio</a>
+    </footer>
+</body>
+</html>

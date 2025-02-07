@@ -1,16 +1,19 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .models import Usuario
-from .forms import UsuarioForm
+from .models import Usuario, Ugel, InstitucionEducativa, Vacante
+from .forms import UsuarioForm, DirectorForm, InstitucionEducativaForm
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseBadRequest
 from django.contrib.auth.hashers import make_password
+from django.db.models import Q
+
 import csv
 import datetime
-
+from django.core.paginator import Paginator
+from django.shortcuts import render
 def login_view(request):
     if request.method == 'POST':
         email = request.POST.get('email')  # Usa .get() para evitar el error si no se envía 'email'
@@ -46,6 +49,16 @@ def login_view(request):
 def custom_logout(request):
     logout(request)
     return redirect('login')
+def index(request):
+    ugeles = Ugel.objects.all()  # Recuperar todas las UGELs de la base de datos
+    return render(request, 'app/index.html', {'ugeles': ugeles})
+
+def colegios_por_ugel(request, ugel_id):
+    ugel = get_object_or_404(Ugel, id=ugel_id)
+    colegios = InstitucionEducativa.objects.filter(ugel=ugel)
+    return render(request, 'app/colegios_por_ugel.html', {'ugel': ugel, 'colegios': colegios})
+
+
 
 @login_required
 def home(request):
@@ -101,6 +114,7 @@ def generar_backup(request):
         fecha_inicio = request.POST.get('fecha_inicio')
         fecha_fin = request.POST.get('fecha_fin')
         # Lógica para generar el backup basado en::contentReference[oaicite:0]{index=0}
+
 @login_required
 def home(request):
     # Asegúrate de pasar nombre_usuario y tipo_usuario en el contexto
@@ -115,6 +129,8 @@ def crear_usuario(request):
         if form.is_valid():
             form.save()
             return redirect('home')
+        else:
+            print(form.errors)
     else:
         form = UsuarioForm()
     return render(request, 'app/crear_usuario.html', {'form': form})
@@ -136,52 +152,217 @@ def generar_backup(request):
 
 @login_required
 def registrar_colegios(request):
-    return render(request, 'app/registrar_colegios.html')
+    # Obtener el tipo de usuario desde la sesión o modelo
+    tipo_usuario = request.user.tipo_usuario  # Ejemplo: "REGIONAL" o "UGEL"
+    ugel_usuario = request.user.ugel  # Suponiendo que el usuario UGEL está vinculado a una UGEL
+
+    # Obtener parámetros de búsqueda y filtrado desde la solicitud
+    search_nombre = request.GET.get('search_nombre', '')
+    search_codigo = request.GET.get('search_codigo', '')
+    filter_modalidad = request.GET.get('filter_modalidad', '')
+    filter_ugel = request.GET.get('filter_ugel', '')
+
+    # Consulta inicial para obtener los colegios
+    colegios = InstitucionEducativa.objects.all()
+
+    # Filtrar colegios según el tipo de usuario
+    if tipo_usuario == "UGEL" and ugel_usuario:
+        colegios = colegios.filter(ugel=ugel_usuario)
+    # Si el tipo de usuario es "REGIONAL", no aplicamos filtro adicional
+
+    # Filtrar por nombre
+    if search_nombre:
+        colegios = colegios.filter(cen_edu__icontains=search_nombre)
+
+    # Filtrar por código modular
+    if search_codigo:
+        colegios = colegios.filter(cod_mod__icontains=search_codigo)
+
+    # Filtrar por modalidad
+    if filter_modalidad:
+        colegios = colegios.filter(d_niv_mod=filter_modalidad)
+
+    # Filtrar por UGEL (solo para el usuario REGIONAL)
+    if tipo_usuario == "REGIONAL" and filter_ugel:
+        colegios = colegios.filter(ugel__id=filter_ugel)
+
+    # Paginación: Mostrar 50 colegios por página
+    paginator = Paginator(colegios, 50)  # 50 colegios por página
+    page_number = request.GET.get('page')  # Número de página actual
+    page_obj = paginator.get_page(page_number)
+
+    # Obtener las modalidades y las UGELs para los filtros
+    modalidades = InstitucionEducativa.NIVEL_MODALIDAD_CHOICES
+    modalidades = [modalidad[0] for modalidad in modalidades]
+
+    # Obtener UGELs registradas (solo para el filtro del usuario REGIONAL)
+    ugeles = Ugel.objects.all() if tipo_usuario == "REGIONAL" else None
+
+    return render(request, 'app/registrar_colegios.html', {
+        'colegios': page_obj,  # Colegios de la página actual
+        'modalidades': modalidades,
+        'ugeles': ugeles,
+        'paginator': paginator,  # Paginador
+        'page_obj': page_obj,   # Información sobre la página actual
+    })
+
+
+
 
 @login_required
-def registrar_directores(request):
-    return render(request, 'app/registrar_directores.html')
+def agregar_colegio(request):
+    if request.method == 'POST':
+        form = InstitucionEducativaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Colegio agregado exitosamente.")
+            return redirect('registrar_colegios')
+    else:
+        form = InstitucionEducativaForm()
+    return render(request, 'app/agregar_colegio.html', {'form': form})
+@login_required
+def editar_colegio(request, id):
+    colegio = get_object_or_404(InstitucionEducativa, id=id)
+    if request.method == 'POST':
+        form = InstitucionEducativaForm(request.POST, instance=colegio)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Colegio actualizado exitosamente.")
+            return redirect('registrar_colegios')
+    else:
+        form = InstitucionEducativaForm(instance=colegio)
+    return render(request, 'app/editar_colegio.html', {'form': form})
+@login_required
+def eliminar_colegio(request, id):
+    colegio = get_object_or_404(InstitucionEducativa, id=id)
+    
+    if request.method == "POST":
+        colegio.delete()
+        messages.success(request, "Colegio eliminado exitosamente.")
+        return redirect('registrar_colegios')
+
+    return render(request, 'app/confirmar_eliminar_colegio.html', {'colegio': colegio})
 
 @login_required
-def registro_vacantes(request):
-    return render(request, 'app/registro_vacantes.html')
+def registrar_director(request):
+    if not hasattr(request.user, 'ugel') or not request.user.ugel:
+        messages.error(request, "No tienes una UGEL asignada.")
+        return redirect('dashboard')  # Cambia 'dashboard' según corresponda
+
+    if request.method == 'POST':
+        form = DirectorForm(request.POST, ugel=request.user.ugel)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Director registrado exitosamente.")
+            return redirect('control_usuarios')
+        else:
+            messages.error(request, "Error al registrar el director. Verifique los datos.")
+    else:
+        form = DirectorForm(ugel=request.user.ugel)
+
+    return render(request, 'app/registrar_director.html', {'form': form})
+    
+@login_required
+def registrar_vacantes(request):
+    # Obtener el colegio del director según su código modular
+    colegio = InstitucionEducativa.objects.filter(cod_mod=request.user.codigo_modular).first()
+    
+    if not colegio:
+        messages.error(request, "No se encontró la institución educativa asociada a este usuario.")
+        return redirect('home')  # Redirigir a la página principal o similar
+
+    # Obtener los grados asociados al nivel educativo del colegio
+    grados = Vacante.get_grados_por_nivel(colegio.d_niv_mod)
+
+    # Si el formulario es enviado (POST)
+    if request.method == "POST":
+        for grado in grados:
+            grado_key = f"vacantes_{grado[0].replace(' ', '_')}"
+            vacantes_regulares = int(request.POST.get(f"{grado_key}_regulares", 0))
+            vacantes_nee = int(request.POST.get(f"{grado_key}_nee", 0))
+
+            # Crear o actualizar las vacantes del grado
+            vacante, created = Vacante.objects.get_or_create(
+                codigo_modular=colegio.cod_mod,
+                nivel=colegio.d_niv_mod,
+                grado=grado[0],
+                defaults={
+                    "vacantes_regulares": vacantes_regulares,
+                    "vacantes_nee": vacantes_nee,
+                }
+            )
+            if not created:
+                vacante.actualizar_vacantes(vacantes_regulares, vacantes_nee)
+
+        messages.success(request, "Vacantes actualizadas correctamente.")
+        return redirect('registrar_vacantes')
+
+    # Obtener las vacantes existentes
+    vacantes = Vacante.objects.filter(codigo_modular=colegio.cod_mod, nivel=colegio.d_niv_mod)
+
+    # Preparar datos para la tabla
+    data_grados = []
+    for grado in grados:
+        vacante = vacantes.filter(grado=grado[0]).first()
+        data_grados.append({
+            "grado": grado[0],
+            "vacantes_regulares": vacante.vacantes_regulares if vacante else 0,
+            "vacantes_nee": vacante.vacantes_nee if vacante else 0,
+        })
+
+    return render(request, 'app/registrar_vacantes.html', {
+        "colegio": colegio,
+        "data_grados": data_grados,
+    })
+
 
 @login_required
 def registro_vacantes_nee(request):
     return render(request, 'app/registro_vacantes_nee.html')
 
-@login_required
 def control_usuarios(request):
-    # Excluir al usuario actual
+    # Obtener todos los usuarios, excluyendo el actual
     usuarios = Usuario.objects.exclude(id=request.user.id)
-    
-    # Filtrar según el tipo de usuario
-    if request.user.tipo_usuario == "REGIONAL":
-        # Solo mostrar usuarios de tipo "REGIONAL" o "UGEL"
-        usuarios = usuarios.filter(tipo_usuario__in=["REGIONAL", "UGEL"])
-    
-    elif request.user.tipo_usuario == "UGEL":
-        # Solo mostrar usuarios "DIRECTOR" de la misma UGEL
-        usuarios = usuarios.filter(tipo_usuario="DIRECTOR", ugel=request.user.ugel)
-    
-    else:
-        # Si no es un usuario regional ni UGEL, no devolver usuarios
-        usuarios = []
 
-    # Filtrar por la búsqueda de nombre o DNI
-    query = request.GET.get('query', '')  # Búsqueda por nombre o DNI
-    tipo_usuario = request.GET.get('tipo_usuario', '')  # Filtrar por tipo de usuario
-    
+    # Filtrar por tipo de usuario
+    if request.user.tipo_usuario == "REGIONAL":
+        usuarios = usuarios.filter(tipo_usuario__in=["REGIONAL", "UGEL", "DIRECTOR"])
+    elif request.user.tipo_usuario == "UGEL":
+        usuarios = usuarios.filter(tipo_usuario="DIRECTOR", ugel=request.user.ugel)
+    else:
+        usuarios = Usuario.objects.none()
+
+    # Filtrar por nombre, apellido, o DNI
+    query = request.GET.get('query', '').strip()
     if query:
-        usuarios = usuarios.filter(nombre__icontains=query) | usuarios.filter(dni__icontains=query)  # Buscar por nombre o DNI
-    
+        usuarios = usuarios.filter(
+            Q(nombre__icontains=query) |
+            Q(apellido_paterno__icontains=query) |
+            Q(apellido_materno__icontains=query) |
+            Q(dni__icontains=query)
+        )
+
+    # Filtrar por tipo de usuario
+    tipo_usuario = request.GET.get('tipo_usuario', '').strip()
     if tipo_usuario:
-        usuarios = usuarios.filter(tipo_usuario=tipo_usuario)  # Filtrar por tipo de usuario
-    
+        usuarios = usuarios.filter(tipo_usuario=tipo_usuario)
+
+    # Filtrar por UGEL
+    filter_ugel = request.GET.get('ugel', '').strip()
+    if filter_ugel:
+        usuarios = usuarios.filter(ugel__id=filter_ugel)
+
+    # Implementar paginación: 50 usuarios por página
+    paginator = Paginator(usuarios, 50)
+    page_number = request.GET.get('page')  # Obtener el número de la página actual
+    page_obj = paginator.get_page(page_number)  # Obtener los usuarios de la página actual
+
     return render(request, 'app/control_usuarios.html', {
-        'usuarios': usuarios,
-        'user': request.user,
+        'page_obj': page_obj,  # Pasar el objeto de la página al template
+        'ugeles': Ugel.objects.all(),  # Pasar UGELs para el filtro
+        'user': request.user,  # Usuario actual
     })
+
 @login_required
 def editar_usuario(request, id):
     usuario = get_object_or_404(Usuario, id=id)  # Fetch the user by ID
@@ -223,3 +404,44 @@ def generar_backup(request):
         writer.writerow([usuario.dni, usuario.nombre, usuario.apellido_paterno, usuario.apellido_materno, usuario.email, usuario.telefono, usuario.tipo_usuario, usuario.estado, usuario.ugel, usuario.codigo_modular])
     
     return response
+def cargar_datos_colegios(request):
+    if request.method == "POST":
+        csv_file = request.FILES.get("csv_file")
+        if not csv_file.name.endswith(".csv"):
+            messages.error(request, "Por favor, suba un archivo CSV válido.")
+            return redirect("registrar_colegios")
+
+        try:
+            decoded_file = csv_file.read().decode("utf-8").splitlines()
+            reader = csv.DictReader(decoded_file, delimiter=";")
+            for row in reader:
+                ugel_nombre = row["D_DREUGEL"].strip()
+                if ugel_nombre == "UGEL LA CONVENCIÓN":
+                    ugel_nombre = "UGEL LA CONVENCION"
+
+                try:
+                    ugel = Ugel.objects.get(nombre=ugel_nombre)
+                except Ugel.DoesNotExist:
+                    messages.error(request, f"Error: La UGEL '{ugel_nombre}' no está registrada.")
+                    continue
+
+                InstitucionEducativa.objects.update_or_create(
+                    cod_mod=row["COD_MOD"].strip(),
+                    defaults={
+                        "cen_edu": row["CEN_EDU"].strip() or "Desconocido",
+                        "niv_mod": row["NIV_MOD"].strip() or "Desconocido",
+                        "d_niv_mod": row["D_NIV_MOD"].strip() or "Desconocido",
+                        "d_forma": row["D_FORMA"].strip() or "Desconocido",
+                        "d_cod_car": row["D_COD_CAR"].strip() or "No aplica",
+                        "d_tipss": row["D_TIPSSEXO"].strip() or "Desconocido",
+                        "d_gestion": row["D_GESTION"].strip() or "Desconocido",
+                        "d_ges_dep": row["D_GES_DEP"].strip() or "Desconocido",
+                        "ugel": ugel,
+                    }
+                )
+            messages.success(request, "Los datos de colegios se han cargado exitosamente.")
+        except Exception as e:
+            messages.error(request, f"Error al procesar el archivo CSV: {e}")
+        return redirect("registrar_colegios")
+
+    return render(request, "app/carga_datos_colegios.html")

@@ -1,0 +1,43 @@
+.confirmation-container {
+    max-width: 600px;
+    margin: 50px auto;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+.confirmation-container h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.confirmation-container p {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.confirmation-container .btn {
+    margin: 5px;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.confirmation-container .btn-danger {
+    background-color: #dc3545;
+}
+
+.confirmation-container .btn-secondary {
+    background-color: #6c757d;
+}
+
+.confirmation-container .btn:hover {
+    opacity: 0.8;
+}

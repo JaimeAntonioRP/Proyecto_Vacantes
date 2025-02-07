@@ -4,18 +4,19 @@
     {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boletas de Pago Web - Inicio</title>
+    <title>MI VACANTE - Inicio</title>
     <link rel="stylesheet" href="{% static 'app/style-home.css' %}">
 </head>
 <body>
     <header class="header">
-        <h1>Boletas de Pago Web</h1>
+        <h1>MI VACANTE</h1>
         <div class="user-info">
             <span>{{ nombre_usuario }}</span>
             <img src="{% static 'app/perfil.png' %}" alt="Foto del Usuario">
             <a href="{% url 'logout' %}" class="logout-button">Cerrar sesión</a>
         </div>
     </header>
+
     <main class="main-container">
         {% if tipo_usuario == "REGIONAL" %}
             <section class="panel">
@@ -35,27 +36,33 @@
                     </a>
                     <a href="{% url 'registrar_colegios' %}" class="button">
                         <img src="{% static 'app/registrar_colegios.png' %}" alt="Registrar Colegios">
-                        <span>Registrar colegios</span>
+                        <span>Registrar Colegios</span>
                     </a>
                     <a href="{% url 'generar_backup' %}" class="button">
                         <img src="{% static 'app/generar_backup.png' %}" alt="Generar Backup">
                         <span>Generar Backup</span>
                     </a>
-                    
-                    
+                    <a href="#" class="button" onclick="openModal()">
+                        <img src="{% static 'app/carga_datos_colegios.png' %}" alt="Carga de Datos de Colegios">
+                        <span>Carga de Datos de Colegios</span>
+                    </a>
                 </div>
             </section>
         {% elif tipo_usuario == "UGEL" %}
             <section class="panel">
                 <h3>Panel de Usuario UGEL</h3>
                 <div class="button-group">
-                    <a href="{% url 'registrar_instituciones' %}" class="button">
-                        <img src="{% static 'app/registrar_instituciones.png' %}" alt="Registrar Instituciones Educativas">
-                        <span>Registrar Instituciones Educativas</span>
+                    <a href="{% url 'registrar_colegios' %}" class="button">
+                        <img src="{% static 'app/registrar_colegios.png' %}" alt="Registrar Colegios">
+                        <span>Registrar Colegios</span>
                     </a>
-                    <a href="{% url 'registrar_directores' %}" class="button">
-                        <img src="{% static 'app/registrar_directores.png' %}" alt="Registrar Directores">
+                    <a href="{% url 'registrar_director' %}" class="button">
+                        <img src="{% static 'app/crear_usuario.png' %}" alt="Registrar Directores">
                         <span>Registrar Directores</span>
+                    </a>
+                    <a href="{% url 'control_usuarios' %}" class="button">
+                        <img src="{% static 'app/control_usuarios.png' %}" alt="Control de Usuarios UGEL">
+                        <span>Control de Usuarios UGEL</span>
                     </a>
                 </div>
             </section>
@@ -63,7 +70,7 @@
             <section class="panel">
                 <h3>Panel de Usuario Director</h3>
                 <div class="button-group">
-                    <a href="{% url 'registro_vacantes' %}" class="button">
+                    <a href="{% url 'registrar_vacantes' %}" class="button">
                         <img src="{% static 'app/registro_vacantes.png' %}" alt="Registrar Vacantes Disponibles">
                         <span>Registrar Vacantes Disponibles</span>
                     </a>
@@ -77,8 +84,35 @@
             <p class="error-message">No tienes un tipo de usuario definido.</p>
         {% endif %}
     </main>
+
     <footer class="footer">
         <p>Design by GEREDU CENTRO DE COMPUTO</p>
     </footer>
+
+    <!-- Modal para carga de CSV -->
+    <div id="uploadModal" class="modal">
+        <div class="modal-content">
+            <h2>Cargar Datos de Colegios</h2>
+            <form method="POST" enctype="multipart/form-data" action="{% url 'cargar_datos_colegios' %}">
+                {% csrf_token %}
+                <label for="csv_file">Seleccione un archivo CSV:</label>
+                <input type="file" id="csv_file" name="csv_file" accept=".csv" required>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn btn-primary">Cargar</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById("uploadModal").style.display = "flex";
+        }
+
+        function closeModal() {
+            document.getElementById("uploadModal").style.display = "none";
+        }
+    </script>
 </body>
 </html>

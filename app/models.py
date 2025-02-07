@@ -15,16 +15,43 @@ class Nivel(models.Model):
 
     def __str__(self):
         return f"{self.nivel} - {self.codigo_modular}"
-
 class InstitucionEducativa(models.Model):
-    cod_ied_N = models.CharField(max_length=50, unique=True)  # Código de la institución educativa
-    nombre = models.CharField(max_length=255)  # Nombre de la institución educativa
-    ugel = models.ForeignKey(Ugel, on_delete=models.CASCADE, related_name="instituciones")  # Relación con la UGEL
-    cod_mod = models.CharField(max_length=50, null=False, default="-------")  # Código modular, con valor por defecto
-    niveles = models.ManyToManyField(Nivel, related_name="instituciones")  # Relación muchos a muchos con niveles
+    NIVEL_MODALIDAD_CHOICES = [
+        ('Inicial - Jardín', 'Inicial - Jardín'),
+        ('Inicial - Cuna-jardín', 'Inicial - Cuna-jardín'),
+        ('Primaria', 'Primaria'),
+        ('Secundaria', 'Secundaria'),
+        ('Básica Alternativa-Inicial e Intermedio', 'Básica Alternativa-Inicial e Intermedio'),
+        ('Básica Alternativa-Avanzado', 'Básica Alternativa-Avanzado'),
+        ('Técnico Productiva', 'Técnico Productiva'),
+        ('Básica Especial-Primaria', 'Básica Especial-Primaria'),
+        ('Escuela Formación Artística', 'Escuela Formación Artística'),
+        ('Escuela Superior Pedagógica', 'Escuela Superior Pedagógica'),
+        ('Instituto Superior Tecnológico', 'Instituto Superior Tecnológico'),
+        ('Básica Especial', 'Básica Especial'),
+        ('Instituto Superior Pedagógico', 'Instituto Superior Pedagógico'),
+        ('Inicial - Programa no escolarizado', 'Inicial - Programa no escolarizado'),
+        ('Básica Especial-Inicial', 'Básica Especial-Inicial'),
+    ]
 
+    cod_mod = models.CharField(max_length=10, unique=True, verbose_name="Código Modular")
+    cen_edu = models.CharField(max_length=255, verbose_name="Centro Educativo", default = "Desconocido")
+    niv_mod = models.CharField(max_length=10, verbose_name="Nivel Modalidad (Código)", default= "Desconocido")
+    d_niv_mod = models.CharField(
+        max_length=50, 
+        choices=NIVEL_MODALIDAD_CHOICES, 
+        verbose_name="Nivel Modalidad (Descripción)",
+        default="Desconocido"
+    )
+    d_forma = models.CharField(max_length=50, verbose_name="Forma de Atención", default="Desconocido")
+    d_cod_car = models.CharField(max_length=50, verbose_name="Código de Carrera", default= "Desconocido")
+    d_tipss = models.CharField(max_length=50, verbose_name="Tipo de Servicio", default="Desconocido")
+    d_gestion = models.CharField(max_length=50, verbose_name="Gestión", default="Desconocido")
+    d_ges_dep = models.CharField(max_length=50, verbose_name="Dependencia de Gestión", default="Desconocido")
+    ugel = models.ForeignKey('Ugel', on_delete=models.SET_NULL, null=True, verbose_name="UGEL")
     def __str__(self):
-        return f"{self.nombre} ({self.cod_ied_N}) - {self.cod_mod}"
+        return f"{self.cen_edu} ({self.cod_mod})"
+
 
 
 
@@ -85,18 +112,104 @@ class Usuario(AbstractBaseUser):
 
     def __str__(self):
         return f"{self.nombre} {self.apellido_paterno} - {self.tipo_usuario}"
+    
 class Vacante(models.Model):
-    institucion_educativa = models.ForeignKey(InstitucionEducativa, on_delete=models.CASCADE, related_name="vacantes")
+    # Código modular de la institución educativa
+    codigo_modular = models.CharField(
+        max_length=10,
+        verbose_name="Código Modular",
+        help_text="Código modular de la institución educativa."
+    , default="Desconocido")
+
+    # Nivel de educación basado en NIVEL_MODALIDAD_CHOICES
     nivel = models.CharField(max_length=50)
+
+    # Grado educativo
     grado = models.CharField(max_length=50)
-    vacantes_regulares = models.IntegerField(default=0)
-    vacantes_nee = models.IntegerField(default=0)  # Vacantes para Necesidades Educativas Especiales (NEE)
+
+    # Número de vacantes disponibles
+    vacantes_regulares = models.IntegerField(default=0, verbose_name="Vacantes Regulares")
+    vacantes_nee = models.IntegerField(default=0, verbose_name="Vacantes NEE")
 
     def __str__(self):
-        return f"{self.institucion_educativa.nombre} - {self.nivel} {self.grado}"
+        return f"{self.codigo_modular} - {self.nivel} - {self.grado}"
 
     def actualizar_vacantes(self, nuevas_vacantes, nuevas_vacantes_nee):
         """Actualiza el número de vacantes regulares y NEE."""
         self.vacantes_regulares = nuevas_vacantes
         self.vacantes_nee = nuevas_vacantes_nee
         self.save()
+
+    @staticmethod
+    def get_grados_por_nivel(nivel):
+        """Obtiene los grados válidos según el nivel educativo."""
+        if nivel in ['Inicial - Jardín', 'Inicial - Cuna-jardín']:
+            return [
+                ('3 años', '3 años'),
+                ('4 años', '4 años'),
+                ('5 años', '5 años'),
+            ]
+        elif nivel == 'Primaria':
+            return [
+                ('1er grado', '1er grado'),
+                ('2do grado', '2do grado'),
+                ('3er grado', '3er grado'),
+                ('4to grado', '4to grado'),
+                ('5to grado', '5to grado'),
+                ('6to grado', '6to grado'),
+            ]
+        elif nivel == 'Secundaria':
+            return [
+                ('1er grado', '1er grado'),
+                ('2do grado', '2do grado'),
+                ('3er grado', '3er grado'),
+                ('4to grado', '4to grado'),
+                ('5to grado', '5to grado'),
+            ]
+        elif nivel in ['Básica Alternativa-Inicial e Intermedio', 'Básica Alternativa-Avanzado']:
+            return [
+                ('Inicial', 'Inicial'),
+                ('Intermedio', 'Intermedio'),
+                ('Avanzado', 'Avanzado'),
+            ]
+        elif nivel == 'Técnico Productiva':
+            return [
+                ('Módulo Básico', 'Módulo Básico'),
+                ('Módulo Avanzado', 'Módulo Avanzado'),
+            ]
+        elif nivel in ['Básica Especial-Primaria', 'Básica Especial-Inicial']:
+            return [
+                ('Inicial', 'Inicial'),
+                ('Primaria', 'Primaria'),
+            ]
+        elif nivel == 'Escuela Formación Artística':
+            return [
+                ('Año 1', 'Año 1'),
+                ('Año 2', 'Año 2'),
+                ('Año 3', 'Año 3'),
+                ('Año 4', 'Año 4'),
+            ]
+        elif nivel in ['Escuela Superior Pedagógica', 'Instituto Superior Pedagógico']:
+            return [
+                ('Ciclo 1', 'Ciclo 1'),
+                ('Ciclo 2', 'Ciclo 2'),
+                ('Ciclo 3', 'Ciclo 3'),
+                ('Ciclo 4', 'Ciclo 4'),
+            ]
+        elif nivel == 'Instituto Superior Tecnológico':
+            return [
+                ('Semestre 1', 'Semestre 1'),
+                ('Semestre 2', 'Semestre 2'),
+                ('Semestre 3', 'Semestre 3'),
+                ('Semestre 4', 'Semestre 4'),
+                ('Semestre 5', 'Semestre 5'),
+                ('Semestre 6', 'Semestre 6'),
+            ]
+        else:
+            return []
+
+    def get_institucion(self):
+        """Obtiene la institución educativa asociada al código modular."""
+        return InstitucionEducativa.objects.filter(cod_mod=self.codigo_modular).first()
+
+

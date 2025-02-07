@@ -1,0 +1,178 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
+
+/* Header */
+.header {
+    background-color: #d32f2f;
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 10;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.social-links a {
+    color: white;
+    text-decoration: none;
+    margin-left: 15px;
+}
+
+.login-button {
+    background-color: white;
+    color: #d32f2f;
+    padding: 5px 10px;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+/* Banner */
+.main-banner {
+    text-align: center;
+    margin-top: 60px;
+    padding: 30px 20px;
+    background: rgba(211, 47, 47, 0.8);
+    color: white;
+}
+
+.main-banner h2 {
+    margin: 10px 0;
+}
+
+.main-banner img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 15px;
+}
+
+/* UGEL Section */
+.ugel-section {
+    padding: 40px 20px;
+}
+
+.ugel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.ugel-card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    text-align: center;
+    text-decoration: none;
+    color: black;
+    padding: 15px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.ugel-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 10px rgba(0, 0, 0, 0.15);
+}
+
+.ugel-card img {
+    max-width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 10px;
+}
+
+.ugel-card span {
+    font-size: 16px;
+    font-weight: bold;
+    display: block;
+}
+
+/* Footer */
+.footer {
+    background-color: #d32f2f;
+    color: white;
+    text-align: center;
+    padding: 10px 20px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-links a {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+    font-size: 14px;
+}
+/* Main Banner */
+.main-banner {
+    height: 400px; /* Altura fija para el banner */
+    background-image: url('dre-cusco.jpg'); /* Ruta de la imagen */
+    background-size: cover; /* Asegura que la imagen ocupe todo el espacio */
+    background-position: center; /* Centra la imagen */
+    position: relative; /* Necesario para la superposición del contenido */
+}
+
+.banner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); /* Fondo semitransparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.banner-content {
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+.banner-content h2 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+.banner-content p {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
+
+.cta-button {
+    background-color: #f44336;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+    background-color: #d32f2f;
+}
