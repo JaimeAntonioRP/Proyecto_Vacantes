@@ -10,6 +10,14 @@
     <link rel="stylesheet" href="{%static 'app/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{%static 'app/css/slick.css' %}" type="text/css" /> 
     <link rel="stylesheet" href="{%static 'app/css/templatemo-style.css' %}">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+
+    <!-- Tu script -->
+    <script src="{% static 'app/js/script.js' %}"></script>
+
 <!--
     
 TemplateMo 560 Astro Motion
@@ -85,7 +93,23 @@ https://templatemo.com/tm-560-astro-motion
                 <a href="{% url 'login' %}" class="btn btn-primary tm-intro-btn">
                   Iniciar Sesión
               </a>
-              </div>            
+              </div> 
+               <!-- Tabla de instituciones educativas -->
+               <div class="container mt-4" id="tablaInstituciones" style="display: none;">
+                  <h2 class="text-center">Instituciones Educativas</h2>
+                  <table id="institucionesTable" class="table table-striped">
+                      <thead>
+                          <tr>
+                              <th>Código Modular</th>
+                              <th>Nombre</th>
+                              <th>Nivel</th>
+                              <th>Gestión</th>
+                              <th>Vacantes</th>
+                          </tr>
+                      </thead>
+                      <tbody></tbody>
+                  </table>
+              </div>           
             </div>            
           </li>
           <li data-page-no="2">
@@ -94,7 +118,7 @@ https://templatemo.com/tm-560-astro-motion
               <div class="circle intro-circle-1"></div>
               <div class="circle intro-circle-2"></div>
               <div class="mx-auto tm-border-top gallery-slider">
-                <figure class="effect-julia item">
+                <figure class="effect-julia item" onclick="cargarInstituciones(1)">
                     <img src="{%static 'app/img/ugel-cusco.jpg'%}" alt="Image">
                     <figcaption>
                         <div>
@@ -103,7 +127,7 @@ https://templatemo.com/tm-560-astro-motion
                         <a href="#">View more</a>
                     </figcaption>
                 </figure>
-                <figure class="effect-julia item">
+                <figure class="effect-julia item" onclick="cargarInstituciones(1)">
                     <img src="{%static 'app/img/ugel-anta.png'%}" alt="Image">
                     <figcaption>
                         <div>
@@ -112,7 +136,7 @@ https://templatemo.com/tm-560-astro-motion
                         <a href="#">View more</a>
                     </figcaption>
                 </figure>
-                <figure class="effect-julia item">
+                <figure class="effect-julia item" onclick="cargarInstituciones(1)">
                     <img src="{%static 'app/img/ugel-acomayo.jpg'%}" alt="Image">
                     <figcaption>
                         <div>
@@ -121,7 +145,7 @@ https://templatemo.com/tm-560-astro-motion
                         <a href="#">View more</a>
                     </figcaption>
                 </figure>
-                <figure class="effect-julia item">
+                <figure class="effect-julia item" onclick="cargarInstituciones(1)">
                     <img src="{%static 'app/img/ugel-calca.jpg'%}" alt="Image">
                     <figcaption>
                         <div>
@@ -130,7 +154,7 @@ https://templatemo.com/tm-560-astro-motion
                         <a href="#">View more</a>
                     </figcaption>
                 </figure>
-                <figure class="effect-julia item">
+                <figure class="effect-julia item" onclick="cargarInstituciones(1)">
                     <img src="{%static 'app/img/ugel-canas.jpg'%}" alt="Image">
                     <figcaption>
                         <div>
@@ -139,7 +163,7 @@ https://templatemo.com/tm-560-astro-motion
                         <a href="#">View more</a>
                     </figcaption>
                 </figure>
-                <figure class="effect-julia item">
+                <figure class="effect-julia item"  onclick="cargarInstituciones(1)">
                     <img src="{%static 'app/img/ugel-canchis.jpg'%}" alt="Image">
                     <figcaption>
                         <div>
@@ -148,7 +172,7 @@ https://templatemo.com/tm-560-astro-motion
                         <a href="#">View more</a>
                     </figcaption>
                 </figure>
-                <figure class="effect-julia item">
+                <figure class="effect-julia item" onclick="cargarInstituciones(1)">
                     <img src="{%static 'app/img/ugel-chumbivilcas.png'%}" alt="Image">
                     <figcaption>
                         <div>
@@ -157,7 +181,7 @@ https://templatemo.com/tm-560-astro-motion
                         <a href="#">View more</a>
                     </figcaption>
                 </figure>
-                <figure class="effect-julia item">
+                <figure class="effect-julia item" onclick="cargarInstituciones(1)">
                     <img src="{%static 'app/img/ugel-espinar.png'%}" alt="Image">
                     <figcaption>
                         <div>
@@ -166,7 +190,7 @@ https://templatemo.com/tm-560-astro-motion
                         <a href="#">View more</a>
                     </figcaption>
                 </figure>
-                <figure class="effect-julia item">
+                <figure class="effect-julia item" onclick="cargarInstituciones(1)">
                     <img src="{%static 'app/img/ugel-la-convecion.png'%}" alt="Image">
                     <figcaption>
                         <div>
@@ -175,7 +199,7 @@ https://templatemo.com/tm-560-astro-motion
                         <a href="#">View more</a>
                     </figcaption>
                 </figure>
-                <figure class="effect-julia item">
+                <figure class="effect-julia item" onclick="cargarInstituciones(1)">
                     <img src="{%static 'app/img/ugel-paruro.png'%}" alt="Image">
                     <figcaption>
                         <div>
@@ -184,7 +208,7 @@ https://templatemo.com/tm-560-astro-motion
                         <a href="#">View more</a>
                     </figcaption>
                 </figure>
-                <figure class="effect-julia item">
+                <figure class="effect-julia item" onclick="cargarInstituciones(1)">
                   <img src="{%static 'app/img/ugel-paucartambo.jpg'%}" alt="Image">
                   <figcaption>
                       <div>
@@ -193,7 +217,7 @@ https://templatemo.com/tm-560-astro-motion
                       <a href="#">View more</a>
                   </figcaption>
               </figure>
-              <figure class="effect-julia item">
+              <figure class="effect-julia item" onclick="cargarInstituciones(1)">
                 <img src="{%static 'app/img/ugel-quispicanchi.jpg'%}" alt="Image">
                 <figcaption>
                     <div>
@@ -203,7 +227,7 @@ https://templatemo.com/tm-560-astro-motion
                 </figcaption>
             </figure>
           </figure>
-          <figure class="effect-julia item">
+          <figure class="effect-julia item" onclick="cargarInstituciones(1)">
             <img src="{%static 'app/img/ugel-urubamba.jpg'%}" alt="Image">
             <figcaption>
                 <div>

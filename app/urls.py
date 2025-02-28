@@ -22,5 +22,6 @@ urlpatterns = [
     path('registrar_colegios/editar/<int:id>/', views.editar_colegio, name='editar_colegio'),
     path('registrar_colegios/eliminar/<int:id>/', views.eliminar_colegio, name='eliminar_colegio'),
     path("cargar-datos-colegios/", views.cargar_datos_colegios, name="cargar_datos_colegios"),
+    path('instituciones/<int:ugel_id>/', views.obtener_instituciones_por_ugel, name='instituciones-por-ugel'),
 ]
 

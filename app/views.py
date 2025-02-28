@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .models import Usuario, Ugel, InstitucionEducativa, Vacante
+from .models import Usuario, Ugel, InstitucionEducativa, VacanteFinal
 from .forms import UsuarioForm, DirectorForm, InstitucionEducativaForm
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -261,60 +261,66 @@ def registrar_director(request):
         form = DirectorForm(ugel=request.user.ugel)
 
     return render(request, 'app/registrar_director.html', {'form': form})
-    
+import json
+from django.utils.text import slugify  
 @login_required
 def registrar_vacantes(request):
-    # Obtener el colegio del director según su código modular
     colegio = InstitucionEducativa.objects.filter(cod_mod=request.user.codigo_modular).first()
-    
+
     if not colegio:
         messages.error(request, "No se encontró la institución educativa asociada a este usuario.")
-        return redirect('home')  # Redirigir a la página principal o similar
+        return redirect('home')
 
-    # Obtener los grados asociados al nivel educativo del colegio
-    grados = Vacante.get_grados_por_nivel(colegio.d_niv_mod)
+    grados = VacanteFinal.get_grados_por_nivel(colegio.d_niv_mod)
 
-    # Si el formulario es enviado (POST)
+    vacante, created = VacanteFinal.objects.get_or_create(
+        codigo_modular=colegio.cod_mod,
+        defaults={"nivel": colegio.d_niv_mod, "vacantes": json.dumps({}), "vacantes_nee": json.dumps({})}
+    )
+
+    vacantes_dict = json.loads(vacante.vacantes)
+    vacantes_nee_dict = json.loads(vacante.vacantes_nee)
+
     if request.method == "POST":
-        for grado in grados:
-            grado_key = f"vacantes_{grado[0].replace(' ', '_')}"
-            vacantes_regulares = int(request.POST.get(f"{grado_key}_regulares", 0))
-            vacantes_nee = int(request.POST.get(f"{grado_key}_nee", 0))
+        print("🛠️ DEBUG: Datos recibidos del formulario ->", request.POST)
 
-            # Crear o actualizar las vacantes del grado
-            vacante, created = Vacante.objects.get_or_create(
-                codigo_modular=colegio.cod_mod,
-                nivel=colegio.d_niv_mod,
-                grado=grado[0],
-                defaults={
-                    "vacantes_regulares": vacantes_regulares,
-                    "vacantes_nee": vacantes_nee,
-                }
-            )
-            if not created:
-                vacante.actualizar_vacantes(vacantes_regulares, vacantes_nee)
+        for grado in grados:
+            grado_key = slugify(grado)  # Asegura compatibilidad con slugify
+
+            vacantes_regulares = request.POST.get(f"vacantes_{grado_key}_regulares", "0").strip()
+            vacantes_nee = request.POST.get(f"vacantes_{grado_key}_nee", "0").strip()
+
+            print(f"🛠️ DEBUG: Procesando {grado} -> Regulares: {vacantes_regulares}, NEE: {vacantes_nee}")
+
+            # Asegurar que sean números válidos antes de convertir a int
+            vacantes_dict[grado] = int(vacantes_regulares) if vacantes_regulares.isdigit() else 0
+            vacantes_nee_dict[grado] = int(vacantes_nee) if vacantes_nee.isdigit() else 0
+
+        vacante.vacantes = json.dumps(vacantes_dict)
+        vacante.vacantes_nee = json.dumps(vacantes_nee_dict)
+        vacante.save()
+
+        print("✅ DEBUG: Vacantes guardadas ->", vacantes_dict)
+        print("✅ DEBUG: Vacantes NEE guardadas ->", vacantes_nee_dict)
 
         messages.success(request, "Vacantes actualizadas correctamente.")
         return redirect('registrar_vacantes')
 
-    # Obtener las vacantes existentes
-    vacantes = Vacante.objects.filter(codigo_modular=colegio.cod_mod, nivel=colegio.d_niv_mod)
+    data_grados = [
+        {
+            "grado": grado,
+            "vacantes_regulares": vacantes_dict.get(grado, 0),
+            "vacantes_nee": vacantes_nee_dict.get(grado, 0),
+        }
+        for grado in grados
+    ]
 
-    # Preparar datos para la tabla
-    data_grados = []
-    for grado in grados:
-        vacante = vacantes.filter(grado=grado[0]).first()
-        data_grados.append({
-            "grado": grado[0],
-            "vacantes_regulares": vacante.vacantes_regulares if vacante else 0,
-            "vacantes_nee": vacante.vacantes_nee if vacante else 0,
-        })
+    print("📢 DEBUG: Datos enviados al HTML ->", data_grados)
 
     return render(request, 'app/registrar_vacantes.html', {
         "colegio": colegio,
         "data_grados": data_grados,
     })
-
 
 @login_required
 def registro_vacantes_nee(request):
@@ -445,3 +451,10 @@ def cargar_datos_colegios(request):
         return redirect("registrar_colegios")
 
     return render(request, "app/carga_datos_colegios.html")
+
+from django.http import JsonResponse
+def obtener_instituciones_por_ugel(request, ugel_id):
+    instituciones = InstitucionEducativa.objects.filter(ugel_id=ugel_id).values(
+        'cod_mod', 'cen_edu', 'd_niv_mod', 'd_gestion'
+    )
+    return JsonResponse(list(instituciones), safe=False)

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+import json
 class Ugel(models.Model):
     nombre = models.CharField(max_length=255, unique=True)
     ruc = models.CharField(max_length=11, unique=True)
@@ -33,7 +34,7 @@ class InstitucionEducativa(models.Model):
         ('Inicial - Programa no escolarizado', 'Inicial - Programa no escolarizado'),
         ('Básica Especial-Inicial', 'Básica Especial-Inicial'),
     ]
-
+    
     cod_mod = models.CharField(max_length=10, unique=True, verbose_name="Código Modular")
     cen_edu = models.CharField(max_length=255, verbose_name="Centro Educativo", default = "Desconocido")
     niv_mod = models.CharField(max_length=10, verbose_name="Nivel Modalidad (Código)", default= "Desconocido")
@@ -112,105 +113,82 @@ class Usuario(AbstractBaseUser):
 
     def __str__(self):
         return f"{self.nombre} {self.apellido_paterno} - {self.tipo_usuario}"
-    
-class Vacante(models.Model):
-    # Código modular de la institución educativa
+
+class VacanteFinal(models.Model):
+    # Código modular como clave primaria
     codigo_modular = models.CharField(
         max_length=10,
+        primary_key=True,
         verbose_name="Código Modular",
-        help_text="Código modular de la institución educativa.",
-        blank=True, 
-        default="")
+        help_text="Código modular de la institución educativa."
+    )
 
-    # Nivel de educación basado en NIVEL_MODALIDAD_CHOICES
+    # Nivel de educación
     nivel = models.CharField(max_length=50)
 
-    # Grado educativo
-    grado = models.CharField(max_length=50)
-
-    # Número de vacantes disponibles
-    vacantes_regulares = models.IntegerField(default=0, verbose_name="Vacantes Regulares")
-    vacantes_nee = models.IntegerField(default=0, verbose_name="Vacantes NEE")
+    # Guardamos las vacantes regulares y NEE como JSON en TextFields
+    vacantes = models.TextField(default="{}", verbose_name="Vacantes Regulares")  
+    vacantes_nee = models.TextField(default="{}", verbose_name="Vacantes NEE")  
 
     def __str__(self):
-        return f"{self.codigo_modular} - {self.nivel} - {self.grado}"
+        return f"{self.codigo_modular} - {self.nivel}"
 
-    def actualizar_vacantes(self, nuevas_vacantes, nuevas_vacantes_nee):
-        """Actualiza el número de vacantes regulares y NEE."""
-        self.vacantes_regulares = nuevas_vacantes
-        self.vacantes_nee = nuevas_vacantes_nee
-        self.save()
+    def actualizar_vacantes(self, grado, regulares, nee):
+        """Actualiza el número de vacantes en un grado específico y las guarda en la base de datos."""
+
+        try:
+            vacantes_dict = json.loads(self.vacantes)  # Convertir de JSON a diccionario
+            vacantes_nee_dict = json.loads(self.vacantes_nee)
+
+            # Asegurar que los valores sean enteros
+            regulares = int(regulares)
+            nee = int(nee)
+
+            # Actualizar los valores
+            vacantes_dict[grado] = regulares
+            vacantes_nee_dict[grado] = nee
+
+            # Guardar los cambios en el modelo
+            self.vacantes = json.dumps(vacantes_dict)
+            self.vacantes_nee = json.dumps(vacantes_nee_dict)
+            self.save()
+
+            # Refrescar el modelo desde la base de datos para verificar los cambios
+            self.refresh_from_db()
+
+            print(f"✅ DEBUG: Vacantes guardadas correctamente -> {vacantes_dict}")
+            print(f"✅ DEBUG: Vacantes NEE guardadas correctamente -> {vacantes_nee_dict}")
+
+        except Exception as e:
+            print(f"⚠️ ERROR: No se pudo actualizar las vacantes -> {str(e)}")
+
+
+    def obtener_vacantes(self):
+        """Devuelve las vacantes regulares y NEE como un diccionario."""
+        return {
+            "regulares": json.loads(self.vacantes),
+            "nee": json.loads(self.vacantes_nee),
+        }
 
     @staticmethod
     def get_grados_por_nivel(nivel):
         """Obtiene los grados válidos según el nivel educativo."""
-        if nivel in ['Inicial - Jardín', 'Inicial - Cuna-jardín']:
-            return [
-                ('3 años', '3 años'),
-                ('4 años', '4 años'),
-                ('5 años', '5 años'),
-            ]
-        elif nivel == 'Primaria':
-            return [
-                ('1er grado', '1er grado'),
-                ('2do grado', '2do grado'),
-                ('3er grado', '3er grado'),
-                ('4to grado', '4to grado'),
-                ('5to grado', '5to grado'),
-                ('6to grado', '6to grado'),
-            ]
-        elif nivel == 'Secundaria':
-            return [
-                ('1er grado', '1er grado'),
-                ('2do grado', '2do grado'),
-                ('3er grado', '3er grado'),
-                ('4to grado', '4to grado'),
-                ('5to grado', '5to grado'),
-            ]
-        elif nivel in ['Básica Alternativa-Inicial e Intermedio', 'Básica Alternativa-Avanzado']:
-            return [
-                ('Inicial', 'Inicial'),
-                ('Intermedio', 'Intermedio'),
-                ('Avanzado', 'Avanzado'),
-            ]
-        elif nivel == 'Técnico Productiva':
-            return [
-                ('Módulo Básico', 'Módulo Básico'),
-                ('Módulo Avanzado', 'Módulo Avanzado'),
-            ]
-        elif nivel in ['Básica Especial-Primaria', 'Básica Especial-Inicial']:
-            return [
-                ('Inicial', 'Inicial'),
-                ('Primaria', 'Primaria'),
-            ]
-        elif nivel == 'Escuela Formación Artística':
-            return [
-                ('Año 1', 'Año 1'),
-                ('Año 2', 'Año 2'),
-                ('Año 3', 'Año 3'),
-                ('Año 4', 'Año 4'),
-            ]
-        elif nivel in ['Escuela Superior Pedagógica', 'Instituto Superior Pedagógico']:
-            return [
-                ('Ciclo 1', 'Ciclo 1'),
-                ('Ciclo 2', 'Ciclo 2'),
-                ('Ciclo 3', 'Ciclo 3'),
-                ('Ciclo 4', 'Ciclo 4'),
-            ]
-        elif nivel == 'Instituto Superior Tecnológico':
-            return [
-                ('Semestre 1', 'Semestre 1'),
-                ('Semestre 2', 'Semestre 2'),
-                ('Semestre 3', 'Semestre 3'),
-                ('Semestre 4', 'Semestre 4'),
-                ('Semestre 5', 'Semestre 5'),
-                ('Semestre 6', 'Semestre 6'),
-            ]
-        else:
-            return []
+        grados_por_nivel = {
+            'Inicial - Jardín': ['3 años', '4 años', '5 años'],
+            'Primaria': ['1er grado', '2do grado', '3er grado', '4to grado', '5to grado', '6to grado'],
+            'Secundaria': ['1er grado', '2do grado', '3er grado', '4to grado', '5to grado'],
+            'Básica Alternativa-Inicial e Intermedio': ['Inicial', 'Intermedio', 'Avanzado'],
+            'Básica Alternativa-Avanzado': ['Inicial', 'Intermedio', 'Avanzado'],
+            'Técnico Productiva': ['Módulo Básico', 'Módulo Avanzado'],
+            'Básica Especial-Primaria': ['Inicial', 'Primaria'],
+            'Básica Especial-Inicial': ['Inicial', 'Primaria'],
+            'Escuela Formación Artística': ['Año 1', 'Año 2', 'Año 3', 'Año 4'],
+            'Escuela Superior Pedagógica': ['Ciclo 1', 'Ciclo 2', 'Ciclo 3', 'Ciclo 4'],
+            'Instituto Superior Pedagógico': ['Ciclo 1', 'Ciclo 2', 'Ciclo 3', 'Ciclo 4'],
+            'Instituto Superior Tecnológico': ['Semestre 1', 'Semestre 2', 'Semestre 3', 'Semestre 4', 'Semestre 5', 'Semestre 6'],
+        }
+        return grados_por_nivel.get(nivel, [])
 
     def get_institucion(self):
         """Obtiene la institución educativa asociada al código modular."""
         return InstitucionEducativa.objects.filter(cod_mod=self.codigo_modular).first()
-
-

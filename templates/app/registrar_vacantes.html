@@ -1,60 +1,69 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrar Vacantes</title>
     <link rel="stylesheet" href="{% static 'app/style-registrar-vacantes.css' %}">
 </head>
 <body>
-    <header class="header">
-        <h1>Registrar Vacantes</h1>
-        <a href="{% url 'home' %}" class="back-button">Volver a Inicio</a>
-    </header>
 
-    <main>
-        <h2>{{ colegio.cen_edu }} ({{ colegio.cod_mod }})</h2>
-        <p>Nivel Educativo: {{ colegio.d_niv_mod }}</p>
+    <h2>{{ colegio.cen_edu }}</h2>
+    <h3>Código Modular: {{ colegio.cod_mod }}</h3>
 
-        <form method="POST">
-            {% csrf_token %}
-            <table>
-                <thead>
-                    <tr>
-                        <th>Grado</th>
-                        <th>Vacantes Regulares</th>
-                        <th>Vacantes NEE</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for grado in data_grados %}
-                    <tr>
-                        <td>{{ grado.grado }}</td>
-                        <td>
-                            <input 
-                                type="number" 
-                                name="vacantes_{{ grado.grado|slugify }}_regulares" 
-                                value="{{ grado.vacantes_regulares }}" 
-                                min="0" 
-                                required>
+    <form method="POST" id="vacantesForm">
+        {% csrf_token %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Grado</th>
+                    <th>Vacantes Regulares</th>
+                    <th>Vacantes NEE</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for grado in data_grados %}
+                <tr>
+                    <td>{{ grado.grado }}</td>
+                    <td>
+                        <input 
+                            type="number" 
+                            name="vacantes_{{ grado.grado|slugify }}_regulares" 
+                            value="{{ grado.vacantes_regulares }}" 
+                            min="0" 
+                            required 
+                            class="vacantes-input">
+                    </td>
+                    <td>
+                        <input 
+                            type="number" 
+                            name="vacantes_{{ grado.grado|slugify }}_nee" 
+                            value="{{ grado.vacantes_nee }}" 
+                            min="0" 
+                            required 
+                            class="vacantes-input">
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit" class="save-button">Guardar Vacantes</button>
+    </form>
 
-                        </td>
-                        <td>
-                            <input 
-                                type="number" 
-                                name="vacantes_{{ grado.grado|slugify }}_regulares" 
-                                value="{{ grado.vacantes_regulares }}" 
-                                min="0" 
-                                required>
+    <button onclick="location.href='{% url 'home' %}'" class="back-button">Regresar a Inicio</button>
 
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <button type="submit" class="save-button">Guardar Vacantes</button>
-        </form>
-    </main>
+    <script>
+        document.getElementById("vacantesForm").addEventListener("submit", function(event) {
+            console.log("📢 Enviando formulario...");
+            document.querySelectorAll(".vacantes-input").forEach(input => {
+                console.log(`${input.name}: ${input.value}`);
+                if (input.value === "") {
+                    input.value = 0; // Asegurar que no se envíen valores vacíos
+                }
+            });
+        });
+    </script>
+
 </body>
 </html>
