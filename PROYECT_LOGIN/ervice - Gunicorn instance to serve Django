@@ -1,0 +1,11 @@
+[0;1;31m×[0m django.service - Gunicorn instance to serve Django
+     Loaded: loaded (/etc/systemd/system/django.service; enabled; vendor preset: enabled)
+     Active: [0;1;31mfailed[0m (Result: exit-code) since Thu 2025-03-27 19:05:22 CET; 8s ago
+   Main PID: 542360 (code=exited, status=203/EXEC)
+        CPU: 1ms
+
+Mar 27 19:05:22 vmi2453993.contaboserver.net systemd[1]: Started Gunicorn instance to serve Django.
+Mar 27 19:05:22 vmi2453993.contaboserver.net systemd[542360]: django.service: Failed to locate executable /root/Proyecto_Vacantes/PROYECT_LOGIN/venv/bin/gunicorn: No such file or directory
+Mar 27 19:05:22 vmi2453993.contaboserver.net systemd[542360]: [0;1;31m[0;1;39m[0;1;31mdjango.service: Failed at step EXEC spawning /root/Proyecto_Vacantes/PROYECT_LOGIN/venv/bin/gunicorn: No such file or directory[0m
+Mar 27 19:05:22 vmi2453993.contaboserver.net systemd[1]: [0;1;39m[0;1;31m[0;1;39mdjango.service: Main process exited, code=exited, status=203/EXEC[0m
+Mar 27 19:05:22 vmi2453993.contaboserver.net systemd[1]: [0;1;38;5;185m[0;1;39m[0;1;38;5;185mdjango.service: Failed with result 'exit-code'.[0m

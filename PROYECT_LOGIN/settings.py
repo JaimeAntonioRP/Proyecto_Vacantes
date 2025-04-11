@@ -26,8 +26,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY', default = 'jaime123')
 
 DEBUG = 'RENDER' not in os.environ
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ["sireva.gereducusco.gob.pe", "173.249.41.76"]
+CSRF_TRUSTED_ORIGINS = ["http://sireva.gereducusco.gob.pe", "http://173.249.41.76"]
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
@@ -121,10 +121,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
-if not DEBUG:
-    STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'app', 'static'),
                     ]

@@ -1,0 +1,11 @@
+[0;1;32m●[0m django.service - Gunicorn instance to serve Django
+     Loaded: loaded (/etc/systemd/system/django.service; enabled; vendor preset: enabled)
+     Active: [0;1;32mactive (running)[0m since Thu 2025-03-27 19:10:11 CET; 8ms ago
+   Main PID: 542443 (gunicorn)
+      Tasks: 1 (limit: 7033)
+     Memory: 1.8M
+        CPU: 6ms
+     CGroup: /system.slice/django.service
+             └─542443 /root/Proyecto_Vacantes/venv/bin/python3 /root/Proyecto_Vacantes/venv/bin/gunicorn --workers 3 --bind unix:/root/Proyecto_Vacantes/django.sock PROYECT_LOGIN.wsgi:application
+
+Mar 27 19:10:11 vmi2453993.contaboserver.net systemd[1]: Started Gunicorn instance to serve Django.
