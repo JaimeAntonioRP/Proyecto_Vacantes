@@ -26,12 +26,14 @@ SECRET_KEY = os.environ.get('SECRET_KEY', default = 'jaime123')
 
 DEBUG = 'RENDER' not in os.environ
 
-ALLOWED_HOSTS = ["sireva.gereducusco.gob.pe", "173.249.41.76"]
+#ALLOWED_HOSTS = ["sireva.gereducusco.gob.pe", "173.249.41.76"]
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 CSRF_TRUSTED_ORIGINS = ["http://sireva.gereducusco.gob.pe", "http://173.249.41.76"]
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 # Application definition
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -126,7 +128,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'app', 'static'),
-                    ]
+]
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
