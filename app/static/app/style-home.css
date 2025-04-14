@@ -169,3 +169,37 @@ body, .form-container, form {
     background-color: #6c757d;
     color: white;
 }
+@media (max-width: 600px) {
+    header.header h1 {
+        font-size: 1.2rem;
+    }
+
+    .header .logout-button {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+
+    main.main-container {
+        padding: 1rem;
+    }
+
+    .button-group {
+        grid-template-columns: 1fr; /* Un botón por fila */
+        gap: 1rem;
+    }
+
+    .button {
+        width: 100%; /* Que ocupe todo el ancho disponible */
+        padding: 1rem 0.5rem;
+    }
+
+    .button img {
+        width: 50px;
+        height: 50px;
+    }
+
+    .modal-content {
+        width: 90%; /* Más pequeño para pantallas chicas */
+        padding: 1rem;
+    }
+}
