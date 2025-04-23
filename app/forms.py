@@ -26,7 +26,7 @@ class UsuarioForm(forms.ModelForm):
             }),
             'password': forms.PasswordInput(),
         }
-
+    
     def clean_dni(self):
         dni = self.cleaned_data.get('dni')
         if dni:

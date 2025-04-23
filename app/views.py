@@ -217,9 +217,12 @@ def agregar_colegio(request):
             form.save()
             messages.success(request, "Colegio agregado exitosamente.")
             return redirect('registrar_colegios')
+        else:
+            print(form.errors)
     else:
         form = InstitucionEducativaForm()
     return render(request, 'app/agregar_colegio.html', {'form': form})
+    
 @login_required
 def editar_colegio(request, id):
     colegio = get_object_or_404(InstitucionEducativa, id=id)

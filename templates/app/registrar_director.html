@@ -53,9 +53,12 @@
                             {{ form.estado }}
                         </div>
                         <div class="form-group">
-                            {{ form.codigo_modular.label_tag }}
+                            <label for="{{ form.codigo_modular.id_for_label }}">
+                                {{ form.codigo_modular.label }}  (COLEGIO)
+                            </label>
                             {{ form.codigo_modular }}
                         </div>
+                        
                     </div>
                 </div>
                 <div class="form-submit">

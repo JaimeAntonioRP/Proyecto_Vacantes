@@ -37,7 +37,7 @@ class InstitucionEducativa(models.Model):
     
     cod_mod = models.CharField(max_length=10, unique=True, verbose_name="Código Modular")
     cen_edu = models.CharField(max_length=255, verbose_name="Centro Educativo", default = "Desconocido")
-    niv_mod = models.CharField(max_length=10, verbose_name="Nivel Modalidad (Código)", default= "Desconocido")
+    niv_mod = models.CharField(max_length=20, verbose_name="Nivel Modalidad (Código)", default= "Desconocido", null=True, blank=True)
     d_niv_mod = models.CharField(
         max_length=50, 
         choices=NIVEL_MODALIDAD_CHOICES, 
@@ -45,10 +45,10 @@ class InstitucionEducativa(models.Model):
         default="Desconocido"
     )
     d_forma = models.CharField(max_length=50, verbose_name="Forma de Atención", default="Desconocido")
-    d_cod_car = models.CharField(max_length=50, verbose_name="Código de Carrera", default= "Desconocido")
+    d_cod_car = models.CharField(max_length=50, verbose_name="Código de Carrera", default= "Desconocido", null = True, blank=True)
     d_tipss = models.CharField(max_length=50, verbose_name="Tipo de Servicio", default="Desconocido")
     d_gestion = models.CharField(max_length=50, verbose_name="Gestión", default="Desconocido")
-    d_ges_dep = models.CharField(max_length=50, verbose_name="Dependencia de Gestión", default="Desconocido")
+    d_ges_dep = models.CharField(max_length=50, verbose_name="Dependencia de Gestión", default="Sector Educativo")
     ugel = models.ForeignKey('Ugel', on_delete=models.SET_NULL, null=True, verbose_name="UGEL")
     def __str__(self):
         return f"{self.cen_edu} ({self.cod_mod})"
@@ -93,7 +93,8 @@ class Usuario(AbstractBaseUser):
         ('REGIONAL', 'Usuario Regional'),
         ('UGEL', 'Usuario UGEL'),
         ('DIRECTOR', 'Director'),
-    ])
+    ], default='REGIONAL'
+    )
     estado = models.CharField(max_length=10, choices=[
         ('ACTIVO', 'Activo'),
         ('INACTIVO', 'Inactivo'),
