@@ -122,10 +122,10 @@ class InstitucionEducativaForm(forms.ModelForm):
             'cen_edu': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Centro Educativo'}),
             'niv_mod': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nivel Modalidad (Código)'}),
             'd_niv_mod': forms.Select(attrs={'class': 'form-control'}, choices=InstitucionEducativa.NIVEL_MODALIDAD_CHOICES),
-            'd_forma': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Forma de Atención'}),
+            'd_forma': forms.Select(attrs={'class': 'form-control'}, choices=InstitucionEducativa.TIPO_FORMA_ATENCION),
             'd_cod_car': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Código de Carrera'}),
-            'd_tipss': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Tipo de Servicio'}),
+            'd_tipss': forms.Select(attrs={'class': 'form-control'}, choices=InstitucionEducativa.TIPOS_SERVICIO),
             'd_gestion': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Gestión'}),
             'd_ges_dep': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Dependencia de Gestión'}),
-            'ugel': forms.Select(attrs={'class': 'form-control'}),  # Selector para UGELs
+            'ugel': forms.Select(attrs={'class': 'form-control'}),  # Selector para UGEL
         }

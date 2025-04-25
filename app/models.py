@@ -34,7 +34,23 @@ class InstitucionEducativa(models.Model):
         ('Inicial - Programa no escolarizado', 'Inicial - Programa no escolarizado'),
         ('Básica Especial-Inicial', 'Básica Especial-Inicial'),
     ]
-    
+    TIPOS_SERVICIO = [
+    ('Mixto', 'Mixto'),
+    ('Mujeres', 'Mujeres'),
+    ('Varones', 'Varones'),
+    ('Desconocido', 'Desconocido'),
+    ]
+    TIPO_FORMA_ATENCION = [
+        ('Escolarizada', 'Escolarizada'),
+        ('No aplica', 'No aplica'),
+        ('No escolarizada', 'No escolarizada'),
+        ('Desconocido', 'Desconocido'),
+    ]
+    TIPO_GESTION = [
+        ('Pública de gestión directa', 'Pública de gestión directa'),
+        ('Pública de gestión privada', 'Pública de gestión privada'),
+        ('Desconocido', 'Desconocido')
+    ]
     cod_mod = models.CharField(max_length=10, unique=True, verbose_name="Código Modular")
     cen_edu = models.CharField(max_length=255, verbose_name="Centro Educativo", default = "Desconocido")
     niv_mod = models.CharField(max_length=20, verbose_name="Nivel Modalidad (Código)", default= "Desconocido", null=True, blank=True)
@@ -44,9 +60,9 @@ class InstitucionEducativa(models.Model):
         verbose_name="Nivel Modalidad (Descripción)",
         default="Desconocido"
     )
-    d_forma = models.CharField(max_length=50, verbose_name="Forma de Atención", default="Desconocido")
+    d_forma = models.CharField(max_length=50, verbose_name="Forma de Atención", default="Desconocido", choices=TIPO_FORMA_ATENCION)
     d_cod_car = models.CharField(max_length=50, verbose_name="Código de Carrera", default= "Desconocido", null = True, blank=True)
-    d_tipss = models.CharField(max_length=50, verbose_name="Tipo de Servicio", default="Desconocido")
+    d_tipss = models.CharField(max_length=50, verbose_name="Tipo de Servicio", default="Desconocido", choices=TIPOS_SERVICIO)
     d_gestion = models.CharField(max_length=50, verbose_name="Gestión", default="Desconocido")
     d_ges_dep = models.CharField(max_length=50, verbose_name="Dependencia de Gestión", default="Sector Educativo")
     ugel = models.ForeignKey('Ugel', on_delete=models.SET_NULL, null=True, verbose_name="UGEL")
