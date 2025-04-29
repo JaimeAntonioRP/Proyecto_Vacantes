@@ -46,6 +46,7 @@
                         <img src="{% static 'app/carga_datos_colegios.png' %}" alt="Carga de Datos de Colegios">
                         <span>Carga de Datos de Colegios</span>
                     </a>
+
                 </div>
             </section>
         {% elif tipo_usuario == "UGEL" %}
@@ -64,6 +65,11 @@
                         <img src="{% static 'app/control_usuarios.png' %}" alt="Control de Usuarios UGEL">
                         <span>Control de Usuarios UGEL</span>
                     </a>
+                    <!--<a href='#' class = "button" onclick="openModal1()">
+                        <img src="{% static 'app/cargar_directores.png' %}" alt="Carga de Datos de Directores">
+                        <span>Carga de Datos de Directores</span>
+                    </a>
+                    -->
                 </div>
             </section>
         {% elif tipo_usuario == "DIRECTOR" %}
@@ -110,5 +116,8 @@
             document.getElementById("uploadModal").style.display = "none";
         }
     </script>
+    <div id="">
+
+    </div>
 </body>
 </html>
