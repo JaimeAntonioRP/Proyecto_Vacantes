@@ -47,8 +47,8 @@ class InstitucionEducativa(models.Model):
         ('Desconocido', 'Desconocido'),
     ]
     TIPO_GESTION = [
-        ('Pública de gestión directa', 'Pública de gestión directa'),
-        ('Pública de gestión privada', 'Pública de gestión privada'),
+        ('PÚBLICA', 'PÚBLICA'),
+        ('PRIVADA', 'PRIVADA'),
         ('Desconocido', 'Desconocido')
     ]
     cod_mod = models.CharField(max_length=10, unique=True, verbose_name="Código Modular")
@@ -63,7 +63,10 @@ class InstitucionEducativa(models.Model):
     d_forma = models.CharField(max_length=50, verbose_name="Forma de Atención", default="Desconocido", choices=TIPO_FORMA_ATENCION)
     d_cod_car = models.CharField(max_length=50, verbose_name="Código de Carrera", default= "Desconocido", null = True, blank=True)
     d_tipss = models.CharField(max_length=50, verbose_name="Tipo de Servicio", default="Desconocido", choices=TIPOS_SERVICIO)
-    d_gestion = models.CharField(max_length=50, verbose_name="Gestión", default="Desconocido")
+    d_gestion = models.CharField(max_length=50,
+                                 choices=TIPO_GESTION,
+                                 verbose_name='Gestión',
+                                 default="Desconocido")
     d_ges_dep = models.CharField(max_length=50, verbose_name="Dependencia de Gestión", default="Sector Educativo")
     ugel = models.ForeignKey('Ugel', on_delete=models.SET_NULL, null=True, verbose_name="UGEL")
     def __str__(self):
@@ -104,6 +107,7 @@ class Usuario(AbstractBaseUser):
     apellido_paterno = models.CharField(max_length=255)
     apellido_materno = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
+    foto_perfil = models.ImageField(upload_to='fotos_perfil/', blank=True, null=True)
     telefono = models.CharField(max_length=20, blank=True, null=True)
     tipo_usuario = models.CharField(max_length=15, choices=[
         ('REGIONAL', 'Usuario Regional'),

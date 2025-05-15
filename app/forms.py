@@ -9,7 +9,7 @@ class UsuarioForm(forms.ModelForm):
         model = Usuario
         fields = [
             'dni', 'nombre', 'apellido_paterno', 'apellido_materno',
-            'email', 'telefono', 'password', 'tipo_usuario', 'estado', 'ugel', 'codigo_modular'
+            'email', 'telefono', 'password', 'tipo_usuario', 'estado', 'ugel', 'codigo_modular','foto_perfil'
         ]
         widgets = {
             'dni': forms.TextInput(attrs={
@@ -25,6 +25,7 @@ class UsuarioForm(forms.ModelForm):
                 'title': 'Ingrese exactamente 9 dígitos numéricos'
             }),
             'password': forms.PasswordInput(),
+            'foto_perfil': forms.FileInput(),
         }
     
     def clean_dni(self):
@@ -125,7 +126,7 @@ class InstitucionEducativaForm(forms.ModelForm):
             'd_forma': forms.Select(attrs={'class': 'form-control'}, choices=InstitucionEducativa.TIPO_FORMA_ATENCION),
             'd_cod_car': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Código de Carrera'}),
             'd_tipss': forms.Select(attrs={'class': 'form-control'}, choices=InstitucionEducativa.TIPOS_SERVICIO),
-            'd_gestion': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Gestión'}),
-            'd_ges_dep': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Dependencia de Gestión'}),
+            'd_gestion': forms.Select(attrs={'class':'form-control'}, choices=InstitucionEducativa.TIPO_GESTION),
+            'd_ges_dep': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Dependencia de Gestión', 'readonly':'readonly'}),
             'ugel': forms.Select(attrs={'class': 'form-control'}),  # Selector para UGEL
         }

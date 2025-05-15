@@ -60,13 +60,7 @@ def colegios_por_ugel(request, ugel_id):
 
 
 
-@login_required
-def home(request):
-    # Puedes agregar lógica aquí si es necesario, como obtener datos del usuario o mostrar diferentes paneles según el tipo de usuario.
-    nombre_usuario = request.user.nombre  # Asegúrate de que el modelo de usuario tenga este campo.
-    tipo_usuario = request.user.tipo_usuario  # Asegúrate de que el modelo de usuario tenga este campo.
 
-    return render(request, 'app/home.html', {'nombre_usuario': nombre_usuario, 'tipo_usuario': tipo_usuario})
 
 @login_required
 def home_view(request):
@@ -80,6 +74,8 @@ def home_view(request):
         'tipo_usuario': usuario.tipo_usuario,
         'permisos': usuario.permisos,
     }
+
+
     return render(request, 'app/home.html', contexto)
 
 @login_required
@@ -120,7 +116,12 @@ def home(request):
     # Asegúrate de pasar nombre_usuario y tipo_usuario en el contexto
     nombre_usuario = request.user.nombre
     tipo_usuario = request.user.tipo_usuario
-    return render(request, 'app/home.html', {'nombre_usuario': nombre_usuario, 'tipo_usuario': tipo_usuario})
+    ap_usuario = request.user.apellido_paterno
+    usuario = request.user
+    return render(request, 'app/home.html', {'nombre_usuario': nombre_usuario, 'tipo_usuario': tipo_usuario,
+    'ap_usuario': ap_usuario,
+    'usuario': usuario                                         
+    })
 
 @login_required
 def crear_usuario(request):
@@ -130,7 +131,7 @@ def crear_usuario(request):
             form.save()
             return redirect('home')
         else:
-            print(form.errors)
+            messages.error
     else:
         form = UsuarioForm()
     return render(request, 'app/crear_usuario.html', {'form': form})
@@ -285,7 +286,7 @@ def registrar_vacantes(request):
     vacantes_nee_dict = json.loads(vacante.vacantes_nee)
 
     if request.method == "POST":
-        print("🛠️ DEBUG: Datos recibidos del formulario ->", request.POST)
+        #print("🛠️ DEBUG: Datos recibidos del formulario ->", request.POST)
 
         for grado in grados:
             grado_key = slugify(grado)  # Asegura compatibilidad con slugify
@@ -293,7 +294,7 @@ def registrar_vacantes(request):
             vacantes_regulares = request.POST.get(f"vacantes_{grado_key}_regulares", "0").strip()
             vacantes_nee = request.POST.get(f"vacantes_{grado_key}_nee", "0").strip()
 
-            print(f"🛠️ DEBUG: Procesando {grado} -> Regulares: {vacantes_regulares}, NEE: {vacantes_nee}")
+            #print(f"🛠️ DEBUG: Procesando {grado} -> Regulares: {vacantes_regulares}, NEE: {vacantes_nee}")
 
             # Asegurar que sean números válidos antes de convertir a int
             vacantes_dict[grado] = int(vacantes_regulares) if vacantes_regulares.isdigit() else 0
@@ -303,8 +304,8 @@ def registrar_vacantes(request):
         vacante.vacantes_nee = json.dumps(vacantes_nee_dict)
         vacante.save()
 
-        print("✅ DEBUG: Vacantes guardadas ->", vacantes_dict)
-        print("✅ DEBUG: Vacantes NEE guardadas ->", vacantes_nee_dict)
+        #print("✅ DEBUG: Vacantes guardadas ->", vacantes_dict)
+        #print("✅ DEBUG: Vacantes NEE guardadas ->", vacantes_nee_dict)
 
         messages.success(request, "Vacantes actualizadas correctamente.")
         return redirect('registrar_vacantes')
@@ -318,7 +319,7 @@ def registrar_vacantes(request):
         for grado in grados
     ]
 
-    print("📢 DEBUG: Datos enviados al HTML ->", data_grados)
+    #print("📢 DEBUG: Datos enviados al HTML ->", data_grados)
 
     return render(request, 'app/registrar_vacantes.html', {
         "colegio": colegio,
@@ -328,6 +329,20 @@ def registrar_vacantes(request):
 @login_required
 def registro_vacantes_nee(request):
     return render(request, 'app/registro_vacantes_nee.html')
+
+@login_required
+def perfil(request):
+    usuario = request.user  # Aquí asumes que está autenticado por el decorador
+
+    if request.method == 'POST':
+        form = UsuarioForm(request.POST, request.FILES, instance=usuario)  # Ojo con request.FILES para la imagen
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = UsuarioForm(instance=usuario)
+
+    return render(request, 'app/editar_usuario.html', {'form': form, 'usuario': usuario})
 
 def control_usuarios(request):
     # Obtener todos los usuarios, excluyendo el actual
@@ -461,3 +476,4 @@ def obtener_instituciones_por_ugel(request, ugel_id):
         'cod_mod', 'cen_edu', 'd_niv_mod', 'd_gestion'
     )
     return JsonResponse(list(instituciones), safe=False)
+

@@ -12,7 +12,15 @@
         <h1>SIREVA CUSCO</h1>
         <div class="user-info">
             <span>{{ nombre_usuario }}</span>
-            <img src="{% static 'app/perfil.png' %}" alt="Foto del Usuario">
+            <span>{{ ap_usuario }}</span>
+            <a href="{% url 'perfil'%}">
+                {% if usuario.foto_perfil %}
+                    <img src="{{ usuario.foto_perfil.url }}" alt="Foto del Usuario">
+                {% else %}
+                    <img src="{% static 'app/perfil.png' %}" alt="Foto del Usuario">
+                {% endif %}
+            </a>
+            <!--<img src="{% static 'app/perfil.png' %}" alt="Foto del Usuario">-->
             <a href="{% url 'logout' %}" class="logout-button">Cerrar sesión</a>
         </div>
     </header>

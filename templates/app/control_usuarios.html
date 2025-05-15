@@ -168,9 +168,15 @@
     <main class="main-container">
         <!-- Información del usuario actual -->
         <div class="user-profile">
-            <img src="{% static 'app/perfil.png' %}" alt="Foto del Usuario" class="user-photo">
+
+                {% if user.foto_perfil %}
+                    <img src="{{ user.foto_perfil.url }}" alt="Foto del Usuario" class="user-photo">
+                {% else %}
+                    <img src="{% static 'app/perfil.png' %}" alt="Foto del Usuario" class="user-photo">
+                {% endif %}
             <div class="user-info">
                 <p><strong>Nombre:</strong> {{ user.nombre }}</p>
+                <p><strong>Apellido Paterno:</strong> {{user.apellido_paterno}}</p>
                 <p><strong>Email:</strong> {{ user.email }}</p>
                 <p><strong>Tipo Usuario:</strong> {{ user.tipo_usuario }}</p>
                 <p><strong>UGEL:</strong> {{ user.ugel }}</p>

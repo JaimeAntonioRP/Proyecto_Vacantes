@@ -114,3 +114,10 @@ body, .form-container, form {
     margin: 0;
     padding: 2;
 }
+.clearablefileinput-clear {
+    display: none;
+}
+
+.clearablefileinput-current {
+    display: none;
+}

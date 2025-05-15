@@ -28,7 +28,7 @@
                 <h1>Crear Nuevo Usuario</h1>
                 <p>Complete los campos requeridos para registrar un nuevo usuario.</p>
             </div>
-            <form method="post">
+            <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="form-row">
                     <div class="form-column">
@@ -78,6 +78,18 @@
                             <label for="id_codigo_modular">Código Modular (COLEGIO):</label>
                             {{ form.codigo_modular }}
                         </div>
+                        <div class="form-group">
+                            <label for="id_foto_perfil">Foto de Perfil:</label>
+                            
+                            {% if usuario.foto_perfil %}
+                                <img src="{{ usuario.foto_perfil.url }}" alt="Foto de perfil" style="max-width: 150px; display: block; margin-bottom: 10px;">
+                            {% else %}
+                                <p>No hay foto cargada</p>
+                            {% endif %}
+                            
+                            {{ form.foto_perfil }}
+                        </div>
+                    </div>
                     </div>
                 </div>
                 <div class="form-submit">
