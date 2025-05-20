@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{% static 'app/style-colegios-editar.css' %}">
 </head>
 <body>
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Actualizar</button>

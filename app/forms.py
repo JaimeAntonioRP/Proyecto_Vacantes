@@ -117,6 +117,7 @@ class InstitucionEducativaForm(forms.ModelForm):
             'd_gestion', 
             'd_ges_dep', 
             'ugel',  # Relación con UGEL
+            'foto_colegio',
         ]
         widgets = {
             'cod_mod': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Código Modular'}),
@@ -129,4 +130,5 @@ class InstitucionEducativaForm(forms.ModelForm):
             'd_gestion': forms.Select(attrs={'class':'form-control'}, choices=InstitucionEducativa.TIPO_GESTION),
             'd_ges_dep': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Dependencia de Gestión', 'readonly':'readonly'}),
             'ugel': forms.Select(attrs={'class': 'form-control'}),  # Selector para UGEL
+            'foto_colegio': forms.FileInput(),
         }

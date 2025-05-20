@@ -87,6 +87,7 @@
         <thead>
             <tr>
                 <th>Código Modular</th>
+                <th>Foto </th> 
                 <th>Centro Educativo</th>
                 <th>Nivel Modalidad</th>
                 <th>Forma de Atención</th>
@@ -102,6 +103,14 @@
             {% for colegio in colegios %}
             <tr>
                 <td>{{ colegio.cod_mod }}</td>
+                <td>
+                    {% if colegio.foto_colegio %}
+                        <img src="{{ colegio.foto_colegio.url }}" alt="Foto del colegio" width="60" height="60" style="border-radius: 8px;">
+                    {% else %}
+                        <img src="{% static 'app/img/fotocolegio4.png' %}" alt="Foto por defecto" width="60" height="60" style="border-radius: 8px;">
+                    {% endif %}
+                </td>
+
                 <td>{{ colegio.cen_edu }}</td>
                 <td>{{ colegio.d_niv_mod }}</td>
                 <td>{{ colegio.d_forma }}</td>

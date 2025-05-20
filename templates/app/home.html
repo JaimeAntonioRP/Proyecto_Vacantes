@@ -27,6 +27,7 @@
 
     <main class="main-container">
         {% if tipo_usuario == "REGIONAL" %}
+            <img src="{% static 'app/img/logo.jpeg' %}" alt="Logo" style="position: fixed; top: 100px; right: 20px; width: 100px; opacity: 1; pointer-events: none; z-index: 0;">
             <section class="panel">
                 <h3>Panel de Usuario Regional</h3>
                 <div class="button-group">
@@ -54,12 +55,40 @@
                         <img src="{% static 'app/carga_datos_colegios.png' %}" alt="Carga de Datos de Colegios">
                         <span>Carga de Datos de Colegios</span>
                     </a>
-
                 </div>
+
             </section>
         {% elif tipo_usuario == "UGEL" %}
             <section class="panel">
-                <h3>Panel de Usuario UGEL</h3>
+                <h3>Panel de Usuario {{request.user.ugel.nombre}}</h3> 
+                {% if request.user.ugel.nombre == "UGEL ACOMAYO" %}
+                    <img src="{% static 'app/img/ugel-acomayo.jpg' %}" alt="Logo" style="position: fixed; top: 100px; right: 20px; width: 100px; opacity: 1; pointer-events: none; z-index: 0;">
+                {% elif request.user.ugel.nombre == "UGEL ANTA" %}
+                    <img src="{% static 'app/img/ugel-anta.jpg' %}" alt="Logo" style="position: fixed; top: 100px; right: 20px; width: 100px; opacity: 1; pointer-events: none; z-index: 0;">
+                {% elif request.user.ugel.nombre == "UGEL CALCA" %}
+                    <img src="{% static 'app/img/ugel-calca.jpg' %}" alt="Logo" style="position: fixed; top: 100px; right: 20px; width: 100px; opacity: 1; pointer-events: none; z-index: 0;">
+                {% elif request.user.ugel.nombre == "UGEL CANAS" %}
+                    <img src="{% static 'app/img/ugel-canas.jpg' %}" alt="Logo" style="position: fixed; top: 100px; right: 20px; width: 100px; opacity: 1; pointer-events: none; z-index: 0;">
+                {% elif request.user.ugel.nombre == "UGEL CANCHIS" %}
+                    <img src="{% static 'app/img/ugel-canchis.jpg' %}" alt="Logo" style="position: fixed; top: 100px; right: 20px; width: 100px; opacity: 1; pointer-events: none; z-index: 0;">
+                {% elif request.user.ugel.nombre == "UGEL CHUMBIVILCAS" %}
+                    <img src="{% static 'app/img/ugel-chumbivilcas.jpg' %}" alt="Logo" style="position: fixed; top: 100px; right: 20px; width: 100px; opacity: 1; pointer-events: none; z-index: 0;">
+                {% elif request.user.ugel.nombre == "UGEL CUSCO" %}
+                    <img src="{% static 'app/img/ugel-cusco.jpg' %}" alt="Logo" style="position: fixed; top: 100px; right: 20px; width: 100px; opacity: 1; pointer-events: none; z-index: 0;">
+                {% elif request.user.ugel.nombre == "UGEL ESPINAR" %}
+                    <img src="{% static 'app/img/ugel-espinar.jpg' %}" alt="Logo" style="position: fixed; top: 100px; right: 20px; width: 100px; opacity: 1; pointer-events: none; z-index: 0;">
+                {% elif request.user.ugel.nombre == "UGEL LA CONVENCION" %}
+                    <img src="{% static 'app/img/ugel-la-convencion.jpg' %}" alt="Logo" style="position: fixed; top: 100px; right: 20px; width: 100px; opacity: 1; pointer-events: none; z-index: 0;">
+                {% elif request.user.ugel.nombre == "UGEL PARURO" %}
+                    <img src="{% static 'app/img/ugel-paruro.jpg' %}" alt="Logo"style="position: fixed; top: 100px; right: 20px; width: 100px; opacity: 1; pointer-events: none; z-index: 0;"> 
+                {% elif request.user.ugel.nombre == "UGEL PISAC" %}
+                    <img src="{% static 'app/img/ugel-pisac.jpg' %}" alt="Logo" style="position: fixed; top: 100px; right: 20px; width: 100px; opacity: 1; pointer-events: none; z-index: 0;">
+                {% elif request.user.ugel.nombre == "UGEL QUISPICANCHI" %}
+                    <img src="{% static 'app/img/ugel-quispicanchi.jpg' %}" alt="Logo" style="position: fixed; top: 100px; right: 20px; width: 100px; opacity: 1; pointer-events: none; z-index: 0;">
+                {% elif request.user.ugel.nombre == "UGEL URUBAMBA" %}
+                    <img src="{% static 'app/img/ugel-urubamba.jpg' %}" alt="Logo" style="position: fixed; top: 100px; right: 20px; width: 100px; opacity: 1; pointer-events: none; z-index: 0;">
+                {% endif %}
+
                 <div class="button-group">
                     <a href="{% url 'registrar_colegios' %}" class="button">
                         <img src="{% static 'app/registrar_colegios.png' %}" alt="Registrar Colegios">
@@ -81,8 +110,19 @@
                 </div>
             </section>
         {% elif tipo_usuario == "DIRECTOR" %}
+            {%if colegio%}
+                {%if colegio.foto_colegio %}
+                    <img src="{{ colegio.foto_colegio.url }}" alt="Logo" style="position: fixed; top: 100px; right: 20px; width: 100px; opacity: 1; pointer-events: none; z-index: 0;">
+                {% else %}
+                    <img src="{% static 'app/img/fotocolegio4.png' %}" alt="Logo" style="position: fixed; top: 100px; right: 20px; width: 100px; opacity: 1; pointer-events: none; z-index: 0;">
+                {% endif %}
+            {% else %}
+                <p>no hay?</p>
+            {% endif %}
             <section class="panel">
                 <h3>Panel de Usuario Director</h3>
+                <p>Colegio: {{ colegio.cen_edu }}</p>
+                <p>Código Modular: {{ colegio.cod_mod }}</p>
                 <div class="button-group">
                     <a href="{% url 'registrar_vacantes' %}" class="button">
                         <img src="{% static 'app/registrar_vacantes.png' %}" alt="Registrar Vacantes Disponibles">

@@ -65,14 +65,17 @@ def colegios_por_ugel(request, ugel_id):
 @login_required
 def home_view(request):
     # Obtén el usuario autenticado
+    colegio = None
     usuario = request.user
     # Verifica si `tipo_usuario` está presente y tiene valor
     tipo_usuario = usuario.tipo_usuario if usuario.tipo_usuario else "NO DEFINIDO"
+    colegio = InstitucionEducativa.objects.filter(cod_mod=request.user.codigo_modular).first()
     # Pasa el tipo de usuario al contexto
     contexto = {
         'nombre_usuario': usuario.nombre,
         'tipo_usuario': usuario.tipo_usuario,
         'permisos': usuario.permisos,
+        'colegio': colegio,
     }
 
 
@@ -86,7 +89,7 @@ def panel_usuario_regional(request):
 @login_required
 def crear_usuario(request):
     if request.method == 'POST':
-        form = UsuarioForm(request.POST)
+        form = UsuarioForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect('home')
@@ -213,7 +216,7 @@ def registrar_colegios(request):
 @login_required
 def agregar_colegio(request):
     if request.method == 'POST':
-        form = InstitucionEducativaForm(request.POST)
+        form = InstitucionEducativaForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             messages.success(request, "Colegio agregado exitosamente.")
@@ -228,7 +231,7 @@ def agregar_colegio(request):
 def editar_colegio(request, id):
     colegio = get_object_or_404(InstitucionEducativa, id=id)
     if request.method == 'POST':
-        form = InstitucionEducativaForm(request.POST, instance=colegio)
+        form = InstitucionEducativaForm(request.POST,request.FILES, instance=colegio)
         if form.is_valid():
             form.save()
             messages.success(request, "Colegio actualizado exitosamente.")
@@ -392,7 +395,7 @@ def editar_usuario(request, id):
     usuario = get_object_or_404(Usuario, id=id)  # Fetch the user by ID
     
     if request.method == 'POST':
-        form = UsuarioForm(request.POST, instance=usuario)  # Use a form to handle the post data
+        form = UsuarioForm(request.POST,request.FILES, instance=usuario)  # Use a form to handle the post data
         if form.is_valid():
             form.save()
             return redirect('control_usuarios')  # Redirect after saving changes

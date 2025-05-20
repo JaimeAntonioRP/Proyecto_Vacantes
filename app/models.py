@@ -51,6 +51,7 @@ class InstitucionEducativa(models.Model):
         ('PRIVADA', 'PRIVADA'),
         ('Desconocido', 'Desconocido')
     ]
+    foto_colegio = models.ImageField(upload_to='fotos_colegio/', blank=True, null=True)
     cod_mod = models.CharField(max_length=10, unique=True, verbose_name="Código Modular")
     cen_edu = models.CharField(max_length=255, verbose_name="Centro Educativo", default = "Desconocido")
     niv_mod = models.CharField(max_length=20, verbose_name="Nivel Modalidad (Código)", default= "Desconocido", null=True, blank=True)
