@@ -27,7 +27,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', default = 'jaime123')
 DEBUG = 'RENDER' not in os.environ
 
 #ALLOWED_HOSTS = ["sireva.gereducusco.gob.pe", "173.249.41.76"]
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'sireva.gereducusco.gob.pe', '173.249.41.76']
 CSRF_TRUSTED_ORIGINS = ["http://sireva.gereducusco.gob.pe", "http://173.249.41.76", "https://sireva.gereducusco.gob.pe"]
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
