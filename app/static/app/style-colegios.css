@@ -85,7 +85,7 @@ tbody tr:nth-child(even) {
 
 tbody td {
     padding: 10px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #000000;
 }
 
 tbody tr:hover {

@@ -53,12 +53,14 @@ def custom_logout(request):
     return redirect('login')
 def index(request):
     ugeles = Ugel.objects.all()  # Recuperar todas las UGELs de la base de datos
-    return render(request, 'app/index.html', {'ugeles': ugeles})
+    Colegios = InstitucionEducativa.objects.all()  # Recuperar todas las instituciones educativas
+    return render(request, 'app/index.html', {'ugeles': ugeles, 'colegios': Colegios})
 
 def colegios_por_ugel(request, ugel_id):
     ugel = get_object_or_404(Ugel, id=ugel_id)
     colegios = InstitucionEducativa.objects.filter(ugel=ugel)
-    return render(request, 'app/colegios_por_ugel.html', {'ugel': ugel, 'colegios': colegios})
+    modalidades = InstitucionEducativa.NIVEL_MODALIDAD_CHOICES
+    return render(request, 'app/colegios_por_ugel.html', {'ugel': ugel, 'colegios': colegios, 'modalidades': modalidades})
 
 
 
@@ -563,3 +565,62 @@ def generar_reporte(request):
     response = HttpResponse(buffer.read(), content_type='application/zip')
     response['Content-Disposition'] = 'attachment; filename=reporte_respaldo.zip'
     return response
+def vacantes_disponibles(request):
+    # Obtener los parámetros GET
+    search_nombre = request.GET.get('search_nombre', '')
+    search_codigo = request.GET.get('search_codigo', '')
+    filter_modalidad = request.GET.get('filter_modalidad', '')
+    filter_ugel = request.GET.get('filter_ugel', '')
+
+    tipo_usuario = "REGIONAL"  # <- Ajusta esto según tu lógica de autenticación
+
+    # Consulta inicial
+    colegios = InstitucionEducativa.objects.all()
+
+    # Filtros aplicados
+    if search_nombre:
+        colegios = colegios.filter(cen_edu__icontains=search_nombre)
+
+    if search_codigo:
+        colegios = colegios.filter(cod_mod__icontains=search_codigo)
+
+    if filter_modalidad:
+        colegios = colegios.filter(d_niv_mod=filter_modalidad)
+
+    if tipo_usuario == "REGIONAL" and filter_ugel:
+        colegios = colegios.filter(ugel__id=filter_ugel)
+
+    # Paginación
+    paginator = Paginator(colegios, 15)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # Modalidades para el combo
+    modalidades = [m[0] for m in InstitucionEducativa.NIVEL_MODALIDAD_CHOICES]
+    
+    # Lista de UGELs
+    ugeles = Ugel.objects.all()
+
+    return render(request, 'app/tabla_vacantes.html', {
+        'colegios': page_obj,
+        'modalidades': modalidades,
+        'ugeles': ugeles,
+                'paginator': paginator,  # Paginador
+        'page_obj': page_obj,   # Información sobre la página actual
+    })
+
+def mostrar_vacantes_individual(request, cod_mod):
+    try:
+        vacante = VacanteFinal.objects.get(codigo_modular=cod_mod)
+
+    except VacanteFinal.DoesNotExist:
+        return HttpResponseBadRequest("Vacante no encontrada.")
+
+    # Convertir las vacantes a un formato legible
+    vacantes_regulares = json.loads(vacante.vacantes)
+    vacantes_nee = json.loads(vacante.vacantes_nee)
+
+    return JsonResponse({
+        'vacantes_regulares': vacantes_regulares,
+        'vacantes_nee': vacantes_nee,
+    })

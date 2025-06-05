@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Colegios</title>
+    <link rel="stylesheet" href="{% static 'app/style-colegios.css' %}">
+    <style>
+        .header-container {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        background-color: #000000; /* Fondo claro para el encabezado */
+        padding: 10px 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    }
+
+    /* Estilo del botón de regreso */
+    .back-button {
+        margin-right: 20px; /* Espaciado entre el icono y el título */
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+    }
+
+    /* Estilo del icono */
+    .back-icon {
+        width: 30px;
+        height: 30px;
+        transition: transform 0.3s ease;
+    }
+
+    .back-button:hover .back-icon {
+        transform: scale(1.1); /* Aumentar ligeramente el tamaño al pasar el ratón */
+    }
+
+    h1 {
+        font-size: 24px;
+        color: #333; /* Color del título */
+        margin: 0;
+    }
+
+    </style>
+</head>
+<body>
+
+    <!-- Formulario de búsqueda y filtros -->
+    <form method="GET" action="{% url 'vacantes_disponibles' %}">
+        <div class="filter-container">
+            <button type="button" class="back-button" onclick="window.location.href='{% url 'index' %}'">
+                <img src="{% static 'app/atras.png' %}" alt="Volver" class="back-icon">
+            </button>
+            <input type="text" name="search_nombre" placeholder="Buscar por nombre" value="{{ request.GET.search_nombre }}">
+            <input type="text" name="search_codigo" placeholder="Buscar por código modular" value="{{ request.GET.search_codigo }}">
+
+            <select name="filter_modalidad">
+                <option value="">Filtrar por modalidad</option>
+                {% for modalidad in modalidades %}
+                <option value="{{ modalidad }}" {% if request.GET.filter_modalidad == modalidad %}selected{% endif %}>
+                    {{ modalidad }}
+                </option>
+                {% endfor %}
+            </select>
+
+            <select name="filter_ugel">
+                <option value="">Filtrar por UGEL</option>
+                {% for ugel in ugeles %}
+                <option value="{{ ugel.id }}" {% if request.GET.filter_ugel == ugel.id|stringformat:"s" %}selected{% endif %}>
+                    {{ ugel.nombre }}
+                </option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">Buscar</button>
+        </div>
+    </form>
+
+    <!-- Tabla para listar colegios -->
+    <table>
+        <thead>
+            <tr>
+                <th>Código Modular</th>
+                <th>Foto </th> 
+                <th>Centro Educativo</th>
+                <th>Nivel Modalidad</th>
+                <th>Forma de Atención</th>
+                <!--<th>Código de Carrera</th>-->
+                <th>Tipo de Servicio</th>
+                <th>Gestión</th>
+                <th>Dependencia de Gestión</th>
+                <th>UGEL</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for colegio in colegios %}
+            <tr>
+                <td>{{ colegio.cod_mod }}</td>
+                <td>
+                    {% if colegio.foto_colegio %}
+                        <img src="{{ colegio.foto_colegio.url }}" alt="Foto del colegio" width="60" height="60" style="border-radius: 8px;">
+                    {% else %}
+                        <img src="{% static 'app/img/fotocolegio4.png' %}" alt="Foto por defecto" width="60" height="60" style="border-radius: 8px;">
+                    {% endif %}
+                </td>
+
+                <td>{{ colegio.cen_edu }}</td>
+                <td>{{ colegio.d_niv_mod }}</td>
+                <td>{{ colegio.d_forma }}</td>
+                <!--<td>{{ colegio.d_cod_car }}</td>-->
+                <td>{{ colegio.d_tipss }}</td>
+                <td>{{ colegio.d_gestion }}</td>
+                <td>{{ colegio.d_ges_dep }}</td>
+                <td>{{ colegio.ugel.nombre }}</td>
+                <td>
+                   <button class="btn view" onclick="verVacantes('{{ colegio.cod_mod }}')">Ver Vacantes</button>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="10">No se encontraron resultados.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Controles de paginación -->
+    <div class="pagination">
+        <span class="step-links">
+            {% if colegios.has_previous %}
+                <a href="?page=1{% if request.GET.search_nombre %}&search_nombre={{ request.GET.search_nombre }}{% endif %}{% if request.GET.search_codigo %}&search_codigo={{ request.GET.search_codigo }}{% endif %}{% if request.GET.filter_modalidad %}&filter_modalidad={{ request.GET.filter_modalidad }}{% endif %}{% if request.GET.filter_ugel %}&filter_ugel={{ request.GET.filter_ugel }}{% endif %}">Primera</a>
+                <a href="?page={{ colegios.previous_page_number }}{% if request.GET.search_nombre %}&search_nombre={{ request.GET.search_nombre }}{% endif %}{% if request.GET.search_codigo %}&search_codigo={{ request.GET.search_codigo }}{% endif %}{% if request.GET.filter_modalidad %}&filter_modalidad={{ request.GET.filter_modalidad }}{% endif %}{% if request.GET.filter_ugel %}&filter_ugel={{ request.GET.filter_ugel }}{% endif %}">Anterior</a>
+            {% endif %}
+
+            <span>Página {{ colegios.number }} de {{ colegios.paginator.num_pages }}</span>
+
+            {% if colegios.has_next %}
+                <a href="?page={{ colegios.next_page_number }}{% if request.GET.search_nombre %}&search_nombre={{ request.GET.search_nombre }}{% endif %}{% if request.GET.search_codigo %}&search_codigo={{ request.GET.search_codigo }}{% endif %}{% if request.GET.filter_modalidad %}&filter_modalidad={{ request.GET.filter_modalidad }}{% endif %}{% if request.GET.filter_ugel %}&filter_ugel={{ request.GET.filter_ugel }}{% endif %}">Siguiente</a>
+                <a href="?page={{ colegios.paginator.num_pages }}{% if request.GET.search_nombre %}&search_nombre={{ request.GET.search_nombre }}{% endif %}{% if request.GET.search_codigo %}&search_codigo={{ request.GET.search_codigo }}{% endif %}{% if request.GET.filter_modalidad %}&filter_modalidad={{ request.GET.filter_modalidad }}{% endif %}{% if request.GET.filter_ugel %}&filter_ugel={{ request.GET.filter_ugel }}{% endif %}">Última</a>
+            {% endif %}
+        </span>
+    </div>
+
+    <!-- Modal de confirmación -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <p>¿Está seguro de que desea eliminar este colegio?</p>
+            <form method="POST" id="deleteForm">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Eliminar</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function confirmDelete(colegioId) {
+            const modal = document.getElementById("deleteModal");
+            const deleteForm = document.getElementById("deleteForm");
+            modal.style.display = "block";
+            deleteForm.action = `/eliminar_colegio/${colegioId}/`; // Ajusta la URL según tu configuración
+        }
+
+        function closeModal() {
+            const modal = document.getElementById("deleteModal");
+            modal.style.display = "none";
+        }
+    </script>
+    <!-- Modal para mostrar vacantes -->
+        <div id="vacantesModal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <span class="close" onclick="cerrarVacantes()">&times;</span>
+                <div id="vacantesContent">
+                    <p>Cargando vacantes...</p>
+                </div>
+            </div>
+        </div>
+
+<style>
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+}
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    width: 80%;
+    border-radius: 10px;
+    max-height: 80%;
+    overflow-y: auto;
+}
+.close {
+    float: right;
+    font-size: 24px;
+    cursor: pointer;
+}
+</style>
+
+<script>
+function verVacantes(codigoModular) {
+    // Mostrar el modal
+    document.getElementById('vacantesModal').style.display = 'block';
+
+    // Limpiar y mostrar mensaje de carga
+    const contenido = document.getElementById('vacantesContent');
+    contenido.innerHTML = '<p>Cargando vacantes...</p>';
+
+    fetch(`/vacantes/${codigoModular}/`)  // Asegúrate de que esta ruta esté bien definida
+        .then(response => {
+            if (!response.ok) throw new Error("Error al obtener vacantes.");
+            return response.json();
+        })
+        .then(data => {
+            let html = '<h3>Vacantes Regulares</h3><ul>';
+            for (let grado in data.vacantes_regulares) {
+                html += `<li>${grado}: ${data.vacantes_regulares[grado]}</li>`;
+            }
+            html += '</ul><h3>Vacantes NEE</h3><ul>';
+            for (let grado in data.vacantes_nee) {
+                html += `<li>${grado}: ${data.vacantes_nee[grado]}</li>`;
+            }
+            html += '</ul>';
+
+            contenido.innerHTML = html;
+        })
+        .catch(error => {
+            contenido.innerHTML = `<p style="color:red;">Error al cargar vacantes.</p>`;
+            console.error(error);
+        });
+}
+
+function cerrarVacantes() {
+    document.getElementById('vacantesModal').style.display = 'none';
+}
+</script>
+
+
+
+</body>
+</html>
