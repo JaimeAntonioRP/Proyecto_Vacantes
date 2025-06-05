@@ -128,7 +128,12 @@
                         <img src="{% static 'app/registrar_vacantes.png' %}" alt="Registrar Vacantes Disponibles">
                         <span>Registrar Vacantes Disponibles</span>
                     </a>
+                    <a href="{% url 'editar_colegio' colegio.id %}" class="button">
+                        <img src="{% static 'app/colegio.png' %}" alt="Editar Datos del Colegio">
+                        <span>Editar Datos del Colegio</span>
+                    </a>
                 </div>
+                    
             </section>
         {% else %}
             <p class="error-message">No tienes un tipo de usuario definido.</p>

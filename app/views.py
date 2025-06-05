@@ -123,9 +123,11 @@ def home(request):
     tipo_usuario = request.user.tipo_usuario
     ap_usuario = request.user.apellido_paterno
     usuario = request.user
+    colegio = InstitucionEducativa.objects.filter(cod_mod=request.user.codigo_modular).first()
     return render(request, 'app/home.html', {'nombre_usuario': nombre_usuario, 'tipo_usuario': tipo_usuario,
     'ap_usuario': ap_usuario,
-    'usuario': usuario                                         
+    'usuario': usuario,
+    'colegio': colegio                                        
     })
 
 @login_required
