@@ -17,6 +17,7 @@ class UsuarioForm(forms.ModelForm):
                 'maxlength': '8',
                 'inputmode': 'numeric',
                 'title': 'Ingrese exactamente 8 dígitos numéricos'
+                
             }),
             'telefono': forms.TextInput(attrs={
                 'pattern': '[0-9]{9}',
@@ -26,6 +27,9 @@ class UsuarioForm(forms.ModelForm):
             }),
             'password': forms.PasswordInput(),
             'foto_perfil': forms.FileInput(),
+            'nombre': forms.TextInput(attrs={'class': 'mayuscula'}),
+            'apellido_paterno': forms.TextInput(attrs={'class': 'mayuscula'}),
+           'apellido_materno': forms.TextInput(attrs={'class': 'mayuscula'}),
         }
     
     def clean_dni(self):

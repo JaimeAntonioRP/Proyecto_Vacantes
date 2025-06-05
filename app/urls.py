@@ -26,6 +26,7 @@ urlpatterns = [
     path("cargar-datos-colegios/", views.cargar_datos_colegios, name="cargar_datos_colegios"),
     path('instituciones/<int:ugel_id>/', views.obtener_instituciones_por_ugel, name='instituciones-por-ugel'),
     path('perfil/', views.perfil, name ='perfil'),
+    path('generar_reporte/', views.generar_reporte, name='generar_reporte'),
 ]
 
 if settings.DEBUG:

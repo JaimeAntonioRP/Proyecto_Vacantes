@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .models import Usuario, Ugel, InstitucionEducativa, VacanteFinal
+from .models import Usuario, Ugel, InstitucionEducativa, VacanteFinal, Nivel
 from .forms import UsuarioForm, DirectorForm, InstitucionEducativaForm
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -9,9 +9,11 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponseBadRequest
 from django.contrib.auth.hashers import make_password
 from django.db.models import Q
-
+import io
+import json
 import csv
 import datetime
+import zipfile
 from django.core.paginator import Paginator
 from django.shortcuts import render
 def login_view(request):
@@ -480,3 +482,82 @@ def obtener_instituciones_por_ugel(request, ugel_id):
     )
     return JsonResponse(list(instituciones), safe=False)
 
+def generar_reporte(request):
+    buffer = io.BytesIO()
+
+    with zipfile.ZipFile(buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+
+        # UGEL.csv
+        ugel_io = io.StringIO()
+        ugel_writer = csv.writer(ugel_io)
+        ugel_writer.writerow(["ID", "Nombre", "RUC"])
+        for u in Ugel.objects.all():
+            ugel_writer.writerow([u.id, u.nombre, u.ruc])
+        zip_file.writestr("UGEL.csv", ugel_io.getvalue())
+
+        # Nivel.csv
+        nivel_io = io.StringIO()
+        nivel_writer = csv.writer(nivel_io)
+        nivel_writer.writerow(["ID", "Código Modular", "Nivel"])
+        for n in Nivel.objects.all():
+            nivel_writer.writerow([n.id, n.codigo_modular, n.nivel])
+        zip_file.writestr("Nivel.csv", nivel_io.getvalue())
+
+        # Instituciones.csv
+        ie_io = io.StringIO()
+        ie_writer = csv.writer(ie_io)
+        ie_writer.writerow([
+            "Código Modular", "Centro Educativo", "Nivel Modalidad", "Forma Atención",
+            "Tipo Servicio", "Gestión", "UGEL"
+        ])
+        for ie in InstitucionEducativa.objects.select_related('ugel').all():
+            ie_writer.writerow([
+                ie.cod_mod,
+                ie.cen_edu,
+                ie.d_niv_mod,
+                ie.d_forma,
+                ie.d_tipss,
+                ie.d_gestion,
+                ie.ugel.nombre if ie.ugel else "Sin UGEL"
+            ])
+        zip_file.writestr("Instituciones.csv", ie_io.getvalue())
+
+        # Usuarios.csv
+        user_io = io.StringIO()
+        user_writer = csv.writer(user_io)
+        user_writer.writerow([
+            "DNI", "Nombre", "Apellido Paterno", "Apellido Materno", "Email",
+            "Tipo", "Estado", "UGEL", "Código Modular"
+        ])
+        for u in Usuario.objects.select_related('ugel').all():
+            user_writer.writerow([
+                u.dni,
+                u.nombre,
+                u.apellido_paterno,
+                u.apellido_materno,
+                u.email,
+                u.tipo_usuario,
+                u.estado,
+                u.ugel.nombre if u.ugel else "Sin UGEL",
+                u.codigo_modular
+            ])
+        zip_file.writestr("Usuarios.csv", user_io.getvalue())
+
+        # Vacantes.csv
+        vac_io = io.StringIO()
+        vac_writer = csv.writer(vac_io)
+        vac_writer.writerow(["Código Modular", "Nivel", "Vacantes Regulares", "Vacantes NEE"])
+        for v in VacanteFinal.objects.all():
+            datos = v.obtener_vacantes()
+            vac_writer.writerow([
+                v.codigo_modular,
+                v.nivel,
+                json.dumps(datos.get("regulares", {}), ensure_ascii=False),
+                json.dumps(datos.get("nee", {}), ensure_ascii=False)
+            ])
+        zip_file.writestr("Vacantes.csv", vac_io.getvalue())
+
+    buffer.seek(0)
+    response = HttpResponse(buffer.read(), content_type='application/zip')
+    response['Content-Disposition'] = 'attachment; filename=reporte_respaldo.zip'
+    return response

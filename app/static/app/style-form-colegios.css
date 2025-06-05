@@ -86,3 +86,9 @@ button.btn-primary:hover {
         width: 100%;
     }
 }
+
+input[type="text"],
+textarea,
+select {
+    text-transform: uppercase;
+}

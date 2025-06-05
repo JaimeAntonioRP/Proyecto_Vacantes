@@ -24,6 +24,7 @@
 <body>
     <div class="background">
         <div class="form-container">
+            
             <div class="form-header">
                 <h1>Crear Nuevo Usuario</h1>
                 <p>Complete los campos requeridos para registrar un nuevo usuario.</p>
@@ -89,14 +90,21 @@
                             
                             {{ form.foto_perfil }}
                         </div>
+                        <div class="form-submit">
+                            <button type="submit">Crear Usuario</button>
+                            <a href="{% url 'home' %}" type="submit">Cancelar</a>    
+                        </div>
+                        
+                    
                     </div>
                     </div>
                 </div>
-                <div class="form-submit">
-                    <button type="submit">Crear Usuario</button>
-                </div>
+               
             </form>
+             
         </div>
+        
     </div>
+    
 </body>
 </html>

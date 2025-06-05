@@ -35,7 +35,7 @@
                         <img src="{% static 'app/crear_usuario.png' %}" alt="Crear Usuario">
                         <span>Crear Usuario</span>
                     </a>
-                    <a href="{% url 'reporte_vacantes' %}" class="button">
+                    <a href="{% url 'generar_reporte' %}" class="button">
                         <img src="{% static 'app/generar_reporte.png' %}" alt="Generar Reporte de Vacantes">
                         <span>Generar Reporte de Vacantes</span>
                     </a>
@@ -78,9 +78,9 @@
                 {% elif request.user.ugel.nombre == "UGEL ESPINAR" %}
                     <img src="{% static 'app/img/ugel-espinar.jpg' %}" alt="Logo" style="position: fixed; top: 100px; right: 20px; width: 100px; opacity: 1; pointer-events: none; z-index: 0;">
                 {% elif request.user.ugel.nombre == "UGEL LA CONVENCION" %}
-                    <img src="{% static 'app/img/ugel-la-convencion.jpg' %}" alt="Logo" style="position: fixed; top: 100px; right: 20px; width: 100px; opacity: 1; pointer-events: none; z-index: 0;">
+                    <img src="{% static 'app/img/ugel-la-convencion.png' %}" alt="Logo" style="position: fixed; top: 100px; right: 20px; width: 100px; opacity: 1; pointer-events: none; z-index: 0;">
                 {% elif request.user.ugel.nombre == "UGEL PARURO" %}
-                    <img src="{% static 'app/img/ugel-paruro.jpg' %}" alt="Logo"style="position: fixed; top: 100px; right: 20px; width: 100px; opacity: 1; pointer-events: none; z-index: 0;"> 
+                    <img src="{% static 'app/img/ugel-paruro.png' %}" alt="Logo"style="position: fixed; top: 100px; right: 20px; width: 100px; opacity: 1; pointer-events: none; z-index: 0;"> 
                 {% elif request.user.ugel.nombre == "UGEL PISAC" %}
                     <img src="{% static 'app/img/ugel-pisac.jpg' %}" alt="Logo" style="position: fixed; top: 100px; right: 20px; width: 100px; opacity: 1; pointer-events: none; z-index: 0;">
                 {% elif request.user.ugel.nombre == "UGEL QUISPICANCHI" %}
