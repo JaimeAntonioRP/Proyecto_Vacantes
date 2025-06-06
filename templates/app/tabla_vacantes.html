@@ -203,6 +203,41 @@
     font-size: 24px;
     cursor: pointer;
 }
+/* Estilos para los títulos de secciones */
+#vacantesContent h3 {
+  font-size: 1.3rem;
+  color: #007BFF;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #007BFF;
+  padding-bottom: 5px;
+}
+
+/* Estilos para las listas de vacantes */
+#vacantesContent ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin-bottom: 20px;
+}
+
+/* Estilo para cada item */
+#vacantesContent li {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+/* Estilo para el mensaje de carga y error */
+#vacantesContent p {
+  font-style: italic;
+  color: #555;
+  font-size: 1rem;
+}
+#vacantesContent p[style*="color:red"] {
+  color: #d9534f; /* rojo para error */
+  font-weight: bold;
+}
+
 </style>
 
 <script>
@@ -220,18 +255,19 @@ function verVacantes(codigoModular) {
             return response.json();
         })
         .then(data => {
-            let html = '<h3>Vacantes Regulares</h3><ul>';
-            for (let grado in data.vacantes_regulares) {
-                html += `<li>${grado}: ${data.vacantes_regulares[grado]}</li>`;
-            }
-            html += '</ul><h3>Vacantes NEE</h3><ul>';
-            for (let grado in data.vacantes_nee) {
-                html += `<li>${grado}: ${data.vacantes_nee[grado]}</li>`;
-            }
-            html += '</ul>';
+    let html = '<h3>Vacantes Regulares</h3><ul>';
+    for (let grado in data.vacantes_regulares) {
+        html += `<li><strong>${grado}:</strong> ${data.vacantes_regulares[grado]}</li>`;
+    }
+    html += '</ul><h3>Vacantes NEE</h3><ul>';
+    for (let grado in data.vacantes_nee) {
+        html += `<li><strong>${grado}:</strong> ${data.vacantes_nee[grado]}</li>`;
+    }
+    html += '</ul>';
 
-            contenido.innerHTML = html;
-        })
+    contenido.innerHTML = html;
+})
+ 
         .catch(error => {
             contenido.innerHTML = `<p style="color:red;">Error al cargar vacantes.</p>`;
             console.error(error);
