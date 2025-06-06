@@ -142,3 +142,12 @@ LOGIN_REDIRECT_URL = 'home'  # Cambia 'home' al nombre de la URL de tu página p
 
 # Redirigir al usuario después del logout
 LOGOUT_REDIRECT_URL = 'login'  # Cambia 'login' al nombre de la URL de tu login
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'sirevaregional@drecusco.edu.pe'  # correo bot
+EMAIL_HOST_PASSWORD = 'sirevacusc@'  # clave o app password
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+

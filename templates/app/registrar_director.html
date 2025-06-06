@@ -7,6 +7,18 @@
     <title>Registrar Director</title>
     <link rel="stylesheet" href="{% static 'app/style-form.css' %}">
 </head>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const soloNumeros = (input, maxLength) => {
+            input.addEventListener('input', () => {
+                input.value = input.value.replace(/\D/g, '').slice(0, maxLength);
+            });
+        };
+    
+        soloNumeros(document.getElementById('id_dni'), 8);
+        soloNumeros(document.getElementById('id_telefono'), 9);
+    });
+    </script>
 <body>
     <div class="background">
         <div class="form-container">

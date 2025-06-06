@@ -1,0 +1,15 @@
+<form action="{% url 'enviar_encuesta' %}" method="POST" class="contact-form">
+    {% csrf_token %}
+    <div class="input-group tm-mb-30">
+        <input name="name" type="text" class="form-control" placeholder="Nombre">
+    </div>
+    <div class="input-group tm-mb-30">
+        <input name="email" type="email" class="form-control" placeholder="Email">
+    </div>
+    <div class="input-group tm-mb-30">
+        <textarea name="message" rows="5" class="form-control" placeholder="Mensaje"></textarea>
+    </div>
+    <div class="input-group justify-content-end">
+        <input type="submit" class="btn btn-primary" value="Enviar">
+    </div>
+</form>

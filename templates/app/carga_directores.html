@@ -1,0 +1,14 @@
+<div id="uploadModal" class="modal">
+        <div class="modal-content">
+            <h2>Cargar Datos de Directores</h2>
+            <form method="POST" enctype="multipart/form-data" action="{% url 'cargar_directores' %}">
+                {% csrf_token %}
+                <label for="csv_file">Seleccione un archivo CSV:</label>
+                <input type="file" id="csv_file" name="csv_file" accept=".csv" required>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn btn-primary">Cargar</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>

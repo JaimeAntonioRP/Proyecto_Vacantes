@@ -55,10 +55,20 @@
                     </a>
                     <a href="#" class="button" onclick="openModal()">
                         <img src="{% static 'app/carga_datos_colegios.png' %}" alt="Carga de Datos de Colegios">
-                        <span>Carga de Datos de Colegios</span>
+                        <span>Carga de Datos IE</span>
                     </a>
-                </div>
-
+                    <a href="{% static 'app/plantillas/colegios.csv' %}" class="button" download>
+                        <img src="{% static 'app/carga_datos_colegios.png' %}" alt="Descargar plantilla de Colegios">
+                        <span>Descargar Plantilla IE CSV</span>
+                    </a>    
+                    <a href="#" class="button" onclick="openModal1()">
+                        <img src="{% static 'app/carga_datos_colegios.png' %}" alt="Carga de Datos de Directores">
+                        <span>Carga de Datos Directores</span>
+                    </a>
+                    <a href="{% static 'app/plantillas/directores.csv' %}" class="button" download>
+                        <img src="{% static 'app/carga_datos_colegios.png' %}" alt="Descargar Plantilla de Directores">
+                        <span>Descargar Plantilla de Directores CSV</span>
+                    </a>   
             </section>
         {% elif tipo_usuario == "UGEL" %}
             <section class="panel">
@@ -109,6 +119,22 @@
                         <span>Carga de Datos de Directores</span>
                     </a>
                     -->
+                    <a href="#" class="button" onclick="openModal()">
+                        <img src="{% static 'app/carga_datos_colegios.png' %}" alt="Carga de Datos de Colegios">
+                        <span>Carga de Datos IE</span>
+                    </a>
+                    <a href="{% static 'app/plantillas/colegios.csv' %}" class="button" download>
+                        <img src="{% static 'app/carga_datos_colegios.png' %}" alt="Descargar plantilla de Colegios">
+                        <span>Descargar Plantilla IE CSV</span>
+                    </a>    
+                    <a href="#" class="button" onclick="openModal1()">
+                        <img src="{% static 'app/carga_datos_colegios.png' %}" alt="Carga de Datos de Directores">
+                        <span>Carga de Datos Directores</span>
+                    </a>
+                    <a href="{% static 'app/plantillas/directores.csv' %}" class="button" download>
+                        <img src="{% static 'app/carga_datos_colegios.png' %}" alt="Descargar Plantilla de Directores">
+                        <span>Descargar Plantilla de Directores CSV</span>
+                    </a>  
                 </div>
             </section>
         {% elif tipo_usuario == "DIRECTOR" %}
@@ -161,7 +187,20 @@
             </form>
         </div>
     </div>
-
+    <div id="uploadModal1" class="modal">
+        <div class="modal-content">
+            <h2>Cargar Datos de Directores</h2>
+            <form method="POST" enctype="multipart/form-data" action="{% url 'cargar_directores' %}">
+                {% csrf_token %}
+                <label for="csv_file">Seleccione un archivo CSV:</label>
+                <input type="file" id="csv_file" name="csv_file" accept=".csv" required>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn btn-primary">Cargar</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal1()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
     <script>
         function openModal() {
             document.getElementById("uploadModal").style.display = "flex";
@@ -169,6 +208,15 @@
 
         function closeModal() {
             document.getElementById("uploadModal").style.display = "none";
+        }
+    </script>
+    <script>
+        function openModal1() {
+            document.getElementById("uploadModal1").style.display = "flex";
+        }
+
+        function closeModal1() {
+            document.getElementById("uploadModal1").style.display = "none";
         }
     </script>
     <div id="">

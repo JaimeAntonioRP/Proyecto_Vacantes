@@ -12,6 +12,7 @@
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Actualizar</button>
+
         {%if request.user.tipo_usuario == 'UGEL' or request.user.tipo_usuario == 'REGIONAL' %}
         <a href="{% url 'registrar_colegios' %}" class="btn btn-secondary">Cancelar</a>
         {% else %}

@@ -29,8 +29,9 @@ urlpatterns = [
     path('generar_reporte/', views.generar_reporte, name='generar_reporte'),
     path('vacantes_disponibles/', views.vacantes_disponibles, name='vacantes_disponibles'),
     path('vacantes/<str:cod_mod>/', views.mostrar_vacantes_individual, name='mostrar_vacantes_individual'),
+    path('enviar_encuesta', views.enviar_encuesta, name='enviar_encuesta'),
+    path("cargar_directores/", views.cargar_directores_csv, name="cargar_directores"),
 
-    
 ]
 
 if settings.DEBUG:

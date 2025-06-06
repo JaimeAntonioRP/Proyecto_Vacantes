@@ -9,6 +9,8 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponseBadRequest
 from django.contrib.auth.hashers import make_password
 from django.db.models import Q
+from django.views.decorators.csrf import csrf_protect
+
 import io
 import json
 import csv
@@ -241,7 +243,10 @@ def editar_colegio(request, id):
         if form.is_valid():
             form.save()
             messages.success(request, "Colegio actualizado exitosamente.")
-            return redirect('registrar_colegios')
+            if(request.user.tipo_usuario == "UGEL" or request.user.tipo_usuario == "REGIONAL"):
+                return redirect('registrar_colegios')
+            else:
+                return redirect('home')
     else:
         form = InstitucionEducativaForm(instance=colegio)
     return render(request, 'app/editar_colegio.html', {'form': form})
@@ -437,6 +442,11 @@ def generar_backup(request):
         writer.writerow([usuario.dni, usuario.nombre, usuario.apellido_paterno, usuario.apellido_materno, usuario.email, usuario.telefono, usuario.tipo_usuario, usuario.estado, usuario.ugel, usuario.codigo_modular])
     
     return response
+import csv
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import InstitucionEducativa, Ugel
+
 def cargar_datos_colegios(request):
     if request.method == "POST":
         csv_file = request.FILES.get("csv_file")
@@ -458,24 +468,42 @@ def cargar_datos_colegios(request):
                     messages.error(request, f"Error: La UGEL '{ugel_nombre}' no está registrada.")
                     continue
 
+                # Normalización de campos según tus choices y validaciones
+                d_niv_mod = row["D_NIV_MOD"].strip() or "Desconocido"
+                if d_niv_mod not in dict(InstitucionEducativa.NIVEL_MODALIDAD_CHOICES):
+                    d_niv_mod = "Desconocido"
+
+                d_forma = row["D_FORMA"].strip() or "Desconocido"
+                if d_forma not in dict(InstitucionEducativa.TIPO_FORMA_ATENCION):
+                    d_forma = "Desconocido"
+
+                d_tipss = row["D_TIPSSEXO"].strip() or "Desconocido"
+                if d_tipss not in dict(InstitucionEducativa.TIPOS_SERVICIO):
+                    d_tipss = "Desconocido"
+
+                d_gestion = row["D_GESTION"].strip() or "Desconocido"
+                if d_gestion not in dict(InstitucionEducativa.TIPO_GESTION):
+                    d_gestion = "Desconocido"
+
+                # Cargar o actualizar el colegio
                 InstitucionEducativa.objects.update_or_create(
                     cod_mod=row["COD_MOD"].strip(),
                     defaults={
                         "cen_edu": row["CEN_EDU"].strip() or "Desconocido",
                         "niv_mod": row["NIV_MOD"].strip() or "Desconocido",
-                        "d_niv_mod": row["D_NIV_MOD"].strip() or "Desconocido",
-                        "d_forma": row["D_FORMA"].strip() or "Desconocido",
-                        "d_cod_car": row["D_COD_CAR"].strip() or "No aplica",
-                        "d_tipss": row["D_TIPSSEXO"].strip() or "Desconocido",
-                        "d_gestion": row["D_GESTION"].strip() or "Desconocido",
-                        "d_ges_dep": row["D_GES_DEP"].strip() or "Desconocido",
+                        "d_niv_mod": d_niv_mod,
+                        "d_forma": d_forma,
+                        "d_cod_car": row["D_COD_CAR"].strip() or "Desconocido",
+                        "d_tipss": d_tipss,
+                        "d_gestion": d_gestion,
+                        "d_ges_dep": row["D_GES_DEP"].strip() or "Sector Educativo",
                         "ugel": ugel,
                     }
                 )
             messages.success(request, "Los datos de colegios se han cargado exitosamente.")
         except Exception as e:
             messages.error(request, f"Error al procesar el archivo CSV: {e}")
-        return redirect("registrar_colegios")
+        return redirect("home")
 
     return render(request, "app/carga_datos_colegios.html")
 
@@ -624,3 +652,78 @@ def mostrar_vacantes_individual(request, cod_mod):
         'vacantes_regulares': vacantes_regulares,
         'vacantes_nee': vacantes_nee,
     })
+
+
+def enviar_encuesta(request):
+    if request.method == 'POST':
+        nombre = request.POST['name']
+        correo = request.POST['email']
+        mensaje = request.POST['message']
+
+        asunto = f"Nuevo mensaje de {nombre}"
+        cuerpo = f"""
+        Has recibido un mensaje desde el formulario de contacto:
+
+        Nombre: {nombre}
+        Correo: {correo}
+        Mensaje:
+        {mensaje}
+        """
+
+        send_mail(
+            subject=asunto,
+            message=cuerpo,
+            from_email='sirevaregional@drecusco.edu.pe',         # correo bot
+            recipient_list=['jrodriguezphillco@gmail.com'],      # tu correo personal
+            fail_silently=False,
+        )
+
+        return redirect('/')  # o una página de "gracias"
+
+    return redirect('/')
+
+
+from django.contrib.auth.hashers import make_password
+from .models import Usuario, Ugel  # Asegúrate de importar tus modelos
+
+def cargar_directores_csv(request):
+    if request.method == "POST":
+        csv_file = request.FILES.get("csv_file")
+        if not csv_file.name.endswith(".csv"):
+            messages.error(request, "Por favor, suba un archivo CSV válido.")
+            return redirect("registrar_director")
+
+        try:
+            decoded_file = csv_file.read().decode("utf-8").splitlines()
+            reader = csv.DictReader(decoded_file)
+
+            for row in reader:
+                try:
+                    ugel = Ugel.objects.get(nombre=row["ugel"].strip())
+                except Ugel.DoesNotExist:
+                    messages.error(request, f"UGEL no encontrada: {row['ugel']}")
+                    continue
+
+                usuario, creado = Usuario.objects.update_or_create(
+                    dni=int(row["dni"]),
+                    defaults={
+                        "nombre": row["nombre"].strip().upper(),
+                        "apellido_paterno": row["apellido_paterno"].strip().upper(),
+                        "apellido_materno": row["apellido_materno"].strip().upper(),
+                        "email": row["email"].strip().lower(),
+                        "telefono": row.get("telefono", "").strip(),
+                        "tipo_usuario": "DIRECTOR",
+                        "codigo_modular": row["codigo_modular"].strip(),
+                        "ugel": ugel,
+                        "estado": "ACTIVO",
+                        "is_staff": False,
+                        "is_superuser": False,
+                        "password": make_password("123456"),  # Contraseña por defecto
+                    }
+                )
+            messages.success(request, "Carga de directores completada.")
+        except Exception as e:
+            messages.error(request, f"Error al cargar el archivo: {e}")
+        return redirect("home")
+
+    return render(request, "app/carga_directores.html")
