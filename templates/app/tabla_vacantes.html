@@ -255,19 +255,19 @@ function verVacantes(codigoModular) {
             return response.json();
         })
         .then(data => {
-    let html = '<h3>Vacantes Regulares</h3><ul>';
-    for (let grado in data.vacantes_regulares) {
-        html += `<li><strong>${grado}:</strong> ${data.vacantes_regulares[grado]}</li>`;
-    }
-    html += '</ul><h3>Vacantes NEE</h3><ul>';
-    for (let grado in data.vacantes_nee) {
-        html += `<li><strong>${grado}:</strong> ${data.vacantes_nee[grado]}</li>`;
-    }
-    html += '</ul>';
+        let html = '<h3>Vacantes Regulares</h3><ul>';
+        for (let grado in data.vacantes_regulares) {
+            html += `<li><strong>${grado}:</strong> ${data.vacantes_regulares[grado]}</li>`;
+        }
+        html += '</ul><h3>Vacantes para Estudiantes con Capacidades Especiales</h3><ul>';
+        for (let grado in data.vacantes_nee) {
+            html += `<li><strong>${grado}:</strong> ${data.vacantes_nee[grado]}</li>`;
+        }
+        html += '</ul>';
 
-    contenido.innerHTML = html;
-})
- 
+        contenido.innerHTML = html;
+    })
+    
         .catch(error => {
             contenido.innerHTML = `<p style="color:red;">Error al cargar vacantes.</p>`;
             console.error(error);

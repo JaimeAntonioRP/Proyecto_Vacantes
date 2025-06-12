@@ -148,6 +148,6 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'sirevaregional@drecusco.edu.pe'  # correo bot
-EMAIL_HOST_PASSWORD = 'sirevacusc@'  # clave o app password
+EMAIL_HOST_PASSWORD = 'qpms ekbj ckhm atod'  # clave o app password
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 

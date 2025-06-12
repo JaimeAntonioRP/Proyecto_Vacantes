@@ -346,12 +346,22 @@ def registro_vacantes_nee(request):
 
 @login_required
 def perfil(request):
-    usuario = request.user  # Aquí asumes que está autenticado por el decorador
+    usuario = request.user
 
     if request.method == 'POST':
-        form = UsuarioForm(request.POST, request.FILES, instance=usuario)  # Ojo con request.FILES para la imagen
+        form = UsuarioForm(request.POST, request.FILES, instance=usuario)
         if form.is_valid():
             form.save()
+
+            # Enviar correo al usuario confirmando la actualización
+            send_mail(
+                subject='Perfil actualizado correctamente',
+                message=f'Hola {usuario.nombre}, tu perfil ha sido actualizado con éxito.',
+                from_email='sirevaregional@drecusco.edu.pe',
+                recipient_list=[usuario.email],
+                fail_silently=False,
+            )
+
             return redirect('home')
     else:
         form = UsuarioForm(instance=usuario)
@@ -401,19 +411,36 @@ def control_usuarios(request):
         'user': request.user,  # Usuario actual
     })
 
+from django.core.mail import send_mail
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from .forms import UsuarioForm
+from .models import Usuario  # Asegúrate de importar tu modelo
+
 @login_required
 def editar_usuario(request, id):
-    usuario = get_object_or_404(Usuario, id=id)  # Fetch the user by ID
+    usuario = get_object_or_404(Usuario, id=id)
     
     if request.method == 'POST':
-        form = UsuarioForm(request.POST,request.FILES, instance=usuario)  # Use a form to handle the post data
+        form = UsuarioForm(request.POST, request.FILES, instance=usuario)
         if form.is_valid():
             form.save()
-            return redirect('control_usuarios')  # Redirect after saving changes
+
+            # Enviar correo al usuario editado
+            send_mail(
+                subject='Actualización de usuario',
+                message=f'Hola {form.cleaned_data["nombre"]}, tu información ha sido actualizada correctamente.',
+                from_email='sirevaregional@drecusco.edu.pe',
+                recipient_list=[form.cleaned_data['email']],
+                fail_silently=False,
+            )
+
+            return redirect('control_usuarios')
     else:
-        form = UsuarioForm(instance=usuario)  # Display the current user data in the form
+        form = UsuarioForm(instance=usuario)
 
     return render(request, 'app/editar_usuario.html', {'form': form, 'usuario': usuario})
+
 @login_required
 def eliminar_usuario(request, id):
     usuario = get_object_or_404(Usuario, id=id)
