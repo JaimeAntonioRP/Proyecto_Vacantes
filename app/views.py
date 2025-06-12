@@ -10,6 +10,8 @@ from django.http import HttpResponseBadRequest
 from django.contrib.auth.hashers import make_password
 from django.db.models import Q
 from django.views.decorators.csrf import csrf_protect
+import string
+import random
 
 import io
 import json
@@ -754,3 +756,31 @@ def cargar_directores_csv(request):
         return redirect("home")
 
     return render(request, "app/carga_directores.html")
+
+def generar_contrasena(longitud=10):
+    caracteres = string.ascii_letters + string.digits
+    return ''.join(random.choice(caracteres) for i in range(longitud))
+
+def recuperar_contrasena(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        try:
+            usuario = Usuario.objects.get(email=email)
+            nueva_contra = generar_contrasena()
+            usuario.set_password(nueva_contra)
+            usuario.save()
+
+            send_mail(
+                'Recuperación de contraseña - SIREVA',
+                f'Hola {usuario.nombre}, tu nueva contraseña es: {nueva_contra}\n\nPor favor cámbiala después de iniciar sesión.',
+                'sirevaregional@drecusco.edu.pe',
+                [email],
+                fail_silently=False,
+            )
+
+            messages.success(request, 'Se ha enviado una nueva contraseña a tu correo.')
+            return redirect('login')
+        except Usuario.DoesNotExist:
+            messages.error(request, 'El correo no está registrado.')
+    
+    return render(request, 'app/recuperar_contrasena.html')

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>Recuperar Contraseña</title>
+    <link rel="stylesheet" href="{% static 'app/style-login.css' %}">
+</head>
+<body style="background: url('{% static "app/cusco.jpg" %}') center/cover no-repeat; background-size: cover;">
+
+<body>
+    <div class="container">
+        <div class="login-panel">
+            <h2>Recuperar Contraseña</h2>
+            <form method="post">
+                {% csrf_token %}
+                <input type="email" name="email" placeholder="Ingresa tu correo electrónico" required>
+                <button type="submit">Enviar nueva contraseña</button>
+            </form>
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
+

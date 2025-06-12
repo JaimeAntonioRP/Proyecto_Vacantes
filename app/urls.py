@@ -31,7 +31,7 @@ urlpatterns = [
     path('vacantes/<str:cod_mod>/', views.mostrar_vacantes_individual, name='mostrar_vacantes_individual'),
     path('enviar_encuesta', views.enviar_encuesta, name='enviar_encuesta'),
     path("cargar_directores/", views.cargar_directores_csv, name="cargar_directores"),
-
+    path('recuperar-contrasena/', views.recuperar_contrasena, name='recuperar_contrasena'),
 ]
 
 if settings.DEBUG:
